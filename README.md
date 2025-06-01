@@ -17,10 +17,10 @@ Traditional networking is broken:
 - **Open-source Tools**  
   Powerful yet fragmented, with steep learning curves.
 
-**Root Cause:**  
+## 🌪️ **Root Cause:**  
 > "The network doesn't understand you."
 
-**OlaOla's Mission:**  
+## 🧬 **OlaOla's Mission:**  
 > **"Make the network understand you."**
 
 ## 🚀 What OlaOla Offers
