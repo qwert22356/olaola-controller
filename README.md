@@ -122,7 +122,6 @@ We are building a **new kind of network** — one that collaborates, reasons, an
 
 ## Installation & Deployment
 
-
 ## OlaOla Controller installation Guide
 
 ## Node.js and npm needed
@@ -131,21 +130,19 @@ We are building a **new kind of network** — one that collaborates, reasons, an
 - node -v  
 - npm -v
 
-Step1: install Frontend
-## Frontend
-# Setup and run the frontend application:
+## Step1: install Frontend
+# Frontend - Setup and run the frontend application:
 
 - cd frontend                      # Navigate to frontend directory
 - npm install                      # Install all dependencies
 - npm run start                    # Start the development server
 
-Step2: install FastAPI
-## FastAPI 
+## Step2: install FastAPI
 # Used for Telemetry Agent
-
+'''bash
 - cd fastapi                       # Navigate to fastapi directory
 - docker-compose up -d             # Start FASTAPI Service
-
+'''
 Step3: install Supabase
 ## Supabase
 # Supabase is an open source Firebase alternative. Follow these steps to set it up:
