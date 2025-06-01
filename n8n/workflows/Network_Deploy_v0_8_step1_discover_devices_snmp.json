@@ -1,0 +1,1816 @@
+{
+  "name": "Network_Deploy_v0.8_step1_discover-devices-snmp",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/discover-devices",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        -200
+      ],
+      "id": "e0b15d59-e7fe-45e0-8fce-1d8d89c15732",
+      "name": "Trigger",
+      "webhookId": "a8e357b3-e533-4668-adba-3e93ba71c0b8"
+    },
+    {
+      "parameters": {
+        "command": "=PATH=$PATH:/usr/bin && nmap -sn {{$json[\"body\"][\"subnet\"]}} | grep \"Nmap scan report\" | awk '{print $5}'"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -200
+      ],
+      "id": "95e3caf5-c1fb-411b-8256-11aafdd181a7",
+      "name": "Ping / nmap"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        240,
+        -200
+      ],
+      "id": "546bc123-eb3e-4921-a06c-19c96c4d8d4c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "networkdeploy_devices",
+          "mode": "list",
+          "cachedResultName": "networkdeploy_devices"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ip_address": "={{ $json.ip_address }}",
+            "hostname": "={{ $json.hostname }}",
+            "if_number": "={{ $json.if_number }}",
+            "status": "={{ $json.status }}",
+            "snmp_module": "={{ $json.snmp_module }}",
+            "vendor_sw": "={{ $json.vendor_sw }}",
+            "vendor_hw": "={{ $json.vendor_hw }}",
+            "hw_sku": "={{ $json.hw_sku }}",
+            "discovered_at": "2025-05-23T16:52:35",
+            "updated_at": "2025-05-23T16:52:38",
+            "first_seen": "2025-05-23T16:52:40"
+          },
+          "matchingColumns": [
+            "ip_address"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "ip_address",
+              "displayName": "ip_address",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "hostname",
+              "displayName": "hostname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "if_number",
+              "displayName": "if_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "lldp_neighbors",
+              "displayName": "lldp_neighbors",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "discovered_at",
+              "displayName": "discovered_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "first_seen",
+              "displayName": "first_seen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "snmp_module",
+              "displayName": "snmp_module",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "vendor_sw",
+              "displayName": "vendor_sw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "vendor_hw",
+              "displayName": "vendor_hw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "hw_sku",
+              "displayName": "hw_sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3500,
+        -200
+      ],
+      "id": "9448ec24-3c0e-4d97-8ea4-149e5d3c1f6f",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "EzSF61njyrocgFwV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d0c2f408-d3ca-4da1-9f97-6e27ce89d713",
+              "leftValue": "={{ $json.stdout }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        40
+      ],
+      "id": "0b30e75a-994d-47a8-8777-1b6474f57a5e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba7996f9-8c17-41a6-a29f-95f59ee04c8e",
+              "name": "ip_address",
+              "value": "={{ $json.ip_address }}",
+              "type": "string"
+            },
+            {
+              "id": "f7b2fbf6-beea-4150-be94-6e38562f61bc",
+              "name": "hostname",
+              "value": "={{ $json.hostname }}",
+              "type": "string"
+            },
+            {
+              "id": "bfa64eb9-1486-4578-861d-868c0905c3f3",
+              "name": "hw_sku",
+              "value": "={{ $json.hw_sku }}",
+              "type": "string"
+            },
+            {
+              "id": "da799444-acbb-4c02-8533-2a6682e6ab1a",
+              "name": "vendor_hw",
+              "value": "={{ $json.vendor_hw }}",
+              "type": "string"
+            },
+            {
+              "id": "d9ca3917-da7c-4961-a538-a99d41337590",
+              "name": "vendor_sw",
+              "value": "={{ $json.vendor_sw }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3940,
+        -200
+      ],
+      "id": "e924116a-5ac0-499f-bf88-48f1de8130fa",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  status: $json.status || \"success\",\n  count: $items().length,\n  message: $json.message || null,\n  data: $items().map(item => item.json)\n}) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        4240,
+        220
+      ],
+      "id": "0b5eb9bf-5f80-4fda-94ab-f64a092ce223",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5452404e-b328-4193-8f07-8ca97cbe14d9",
+              "name": "status",
+              "value": "fail",
+              "type": "string"
+            },
+            {
+              "id": "985b9419-c1d7-4c48-a492-e9b6274bf34f",
+              "name": "message",
+              "value": "未发现任何活跃设备IP",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1520,
+        960
+      ],
+      "id": "893ab1d9-a897-4f1f-8bb6-6668d36be679",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "## Network Discovery",
+        "height": 1520,
+        "width": 4960
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -440
+      ],
+      "id": "146f7cdb-c7e3-440e-80d8-ae94b9c19735",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "command": "=for ip in {{ $json.ip_list }}; do\n(\n    result=$(snmpget -v2c -c public -t 1 -r 0 $ip sysDescr.0 2>/dev/null)\n\n  if [ -n \"$result\" ]; then\n    printf \"%s => %s\\n\" \"$ip\" \"$result\"\n  fi\n) &\ndone\nwait"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        -420
+      ],
+      "id": "b9cc48b9-203d-4b37-bf5c-f5cb7f2ff4ec",
+      "name": "Execute Command",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753c73df-fb65-4206-b570-22a217adfa38",
+              "leftValue": "={{ $json.group }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        -420
+      ],
+      "id": "f880bb27-5aa4-4452-9e8b-6b3eec0ec77c",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753c73df-fb65-4206-b570-22a217adfa38",
+              "leftValue": "={{ $json.group }}",
+              "rightValue": 2,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        -280
+      ],
+      "id": "e6eb1775-ec39-43ce-8e1d-88d209e1379f",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753c73df-fb65-4206-b570-22a217adfa38",
+              "leftValue": "={{ $json.group }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        -100
+      ],
+      "id": "d211a347-44f6-4efc-a01a-e6e20a6c4158",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753c73df-fb65-4206-b570-22a217adfa38",
+              "leftValue": "={{ $json.group }}",
+              "rightValue": 4,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        40
+      ],
+      "id": "56a2378d-a113-4d29-9746-1824f2348710",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753c73df-fb65-4206-b570-22a217adfa38",
+              "leftValue": "={{ $json.group }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        160
+      ],
+      "id": "76403a49-8d54-4d7c-a213-47d4c02eb746",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753c73df-fb65-4206-b570-22a217adfa38",
+              "leftValue": "={{ $json.group }}",
+              "rightValue": 6,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        280
+      ],
+      "id": "3f778c29-5dee-49a4-bd18-9f9dcf615e41",
+      "name": "If6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753c73df-fb65-4206-b570-22a217adfa38",
+              "leftValue": "={{ $json.group }}",
+              "rightValue": 7,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        420
+      ],
+      "id": "c79a48e9-87a8-4118-be1e-0beb08a493e4",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753c73df-fb65-4206-b570-22a217adfa38",
+              "leftValue": "={{ $json.group }}",
+              "rightValue": 8,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        560
+      ],
+      "id": "b02e0e3e-f853-4390-b3e3-76b356437c11",
+      "name": "If8"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753c73df-fb65-4206-b570-22a217adfa38",
+              "leftValue": "={{ $json.group }}",
+              "rightValue": 9,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        700
+      ],
+      "id": "0b5b48b3-e02a-4f7c-ad0d-23cbfd3f6f19",
+      "name": "If9"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "753c73df-fb65-4206-b570-22a217adfa38",
+              "leftValue": "={{ $json.group }}",
+              "rightValue": 10,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1300,
+        840
+      ],
+      "id": "601e84ed-fd34-4494-8e47-d84b3fc26dfd",
+      "name": "If10"
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address).join(\" \");\nreturn [{ json: { ip_list: ipList } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        -420
+      ],
+      "id": "394a1237-9f75-4b9b-89a3-7feb065c85ae",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = ($json.stdout || \"\").split(\"\\n\").filter(l => l.includes(\"=>\"));\n\nreturn lines.map(line => {\n  const [ip, snmp] = line.split(\"=>\").map(s => s.trim());\n  return { json: { ip, snmp } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        -420
+      ],
+      "id": "0f8aac31-1c8d-48de-b5d8-49cac1a8dc20",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "command": "=for ip in {{ $json.ip_list }}; do\n(\n  result=$(snmpget -v2c -c public -t 1 -r 0 $ip sysDescr.0 2>/dev/null)\n  if [ -n \"$result\" ]; then\n    printf \"%s => %s\\n\" \"$ip\" \"$result\"\n  fi\n) &\ndone\nwait"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        -260
+      ],
+      "id": "0ca2915d-c314-4e0f-bc58-56c248d04669",
+      "name": "Execute Command1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address).join(\" \");\nreturn [{ json: { ip_list: ipList } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        -260
+      ],
+      "id": "dd094275-c36f-43bb-abdc-7311423dcff5",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = ($json.stdout || \"\").split(\"\\n\").filter(l => l.includes(\"=>\"));\n\nreturn lines.map(line => {\n  const [ip, snmp] = line.split(\"=>\").map(s => s.trim());\n  return { json: { ip, snmp } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        -260
+      ],
+      "id": "2e12fa0a-df98-4229-9394-53764c10d0ef",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "command": "=for ip in {{ $json.ip_list }}; do\n(\n  result=$(snmpget -v2c -c public -t 1 -r 0 $ip sysDescr.0 2>/dev/null)\n  if [ -n \"$result\" ]; then\n    printf \"%s => %s\\n\" \"$ip\" \"$result\"\n  fi\n) &\ndone\nwait"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        -120
+      ],
+      "id": "c8390fd7-1538-4f97-b22a-85e31d96772f",
+      "name": "Execute Command2",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address).join(\" \");\nreturn [{ json: { ip_list: ipList } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        -120
+      ],
+      "id": "51ffcf37-cdd5-43cc-aab1-e4ecb9b9e2ec",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = ($json.stdout || \"\").split(\"\\n\").filter(l => l.includes(\"=>\"));\n\nreturn lines.map(line => {\n  const [ip, snmp] = line.split(\"=>\").map(s => s.trim());\n  return { json: { ip, snmp } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        -120
+      ],
+      "id": "d80311ed-cc65-4e2f-b513-d8c5d137f217",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "command": "=for ip in {{ $json.ip_list }}; do\n(\n  result=$(snmpget -v2c -c public -t 1 -r 0 $ip sysDescr.0 2>/dev/null)\n  if [ -n \"$result\" ]; then\n    printf \"%s => %s\\n\" \"$ip\" \"$result\"\n  fi\n) &\ndone\nwait"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        20
+      ],
+      "id": "51c4c64b-7037-4e3a-bf26-e64840a6512f",
+      "name": "Execute Command3",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address).join(\" \");\nreturn [{ json: { ip_list: ipList } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        20
+      ],
+      "id": "0f2fa299-38ef-4b08-a363-8d998f3f9a55",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = ($json.stdout || \"\").split(\"\\n\").filter(l => l.includes(\"=>\"));\n\nreturn lines.map(line => {\n  const [ip, snmp] = line.split(\"=>\").map(s => s.trim());\n  return { json: { ip, snmp } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        20
+      ],
+      "id": "f452ed2b-8952-4f2c-b551-ae94d71bfff7",
+      "name": "Code7"
+    },
+    {
+      "parameters": {
+        "command": "=for ip in {{ $json.ip_list }}; do\n(\n  result=$(snmpget -v2c -c public -t 1 -r 0 $ip sysDescr.0 2>/dev/null)\n  if [ -n \"$result\" ]; then\n    printf \"%s => %s\\n\" \"$ip\" \"$result\"\n  fi\n) &\ndone\nwait"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        140
+      ],
+      "id": "b2a7c901-abf2-41e3-9e1a-0b77b04853e0",
+      "name": "Execute Command4",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address).join(\" \");\nreturn [{ json: { ip_list: ipList } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        140
+      ],
+      "id": "9340539a-478a-497f-89f2-40d0508a8a39",
+      "name": "Code8"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = ($json.stdout || \"\").split(\"\\n\").filter(l => l.includes(\"=>\"));\n\nreturn lines.map(line => {\n  const [ip, snmp] = line.split(\"=>\").map(s => s.trim());\n  return { json: { ip, snmp } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        140
+      ],
+      "id": "e90336ea-fd7b-44e6-bcff-524d51e513c4",
+      "name": "Code9"
+    },
+    {
+      "parameters": {
+        "command": "=for ip in {{ $json.ip_list }}; do\n(\n  result=$(snmpget -v2c -c public -t 1 -r 0 $ip sysDescr.0 2>/dev/null)\n  if [ -n \"$result\" ]; then\n    printf \"%s => %s\\n\" \"$ip\" \"$result\"\n  fi\n) &\ndone\nwait"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        260
+      ],
+      "id": "3dbbd0f2-3120-453c-884d-84ec2a52da97",
+      "name": "Execute Command5",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address).join(\" \");\nreturn [{ json: { ip_list: ipList } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        260
+      ],
+      "id": "1d8d1795-377d-43ba-90e2-bfee61219abc",
+      "name": "Code10"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = ($json.stdout || \"\").split(\"\\n\").filter(l => l.includes(\"=>\"));\n\nreturn lines.map(line => {\n  const [ip, snmp] = line.split(\"=>\").map(s => s.trim());\n  return { json: { ip, snmp } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        260
+      ],
+      "id": "66b6c816-b2e7-4caf-be71-2af09a90fa86",
+      "name": "Code11"
+    },
+    {
+      "parameters": {
+        "command": "=for ip in {{ $json.ip_list }}; do\n(\n  result=$(snmpget -v2c -c public -t 1 -r 0 $ip sysDescr.0 2>/dev/null)\n  if [ -n \"$result\" ]; then\n    printf \"%s => %s\\n\" \"$ip\" \"$result\"\n  fi\n) &\ndone\nwait"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        400
+      ],
+      "id": "c2d19df1-a719-4b16-930d-a3e89928d616",
+      "name": "Execute Command6",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address).join(\" \");\nreturn [{ json: { ip_list: ipList } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        400
+      ],
+      "id": "5d4e35b8-b6de-4988-8736-52a6e2f48b74",
+      "name": "Code12"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = ($json.stdout || \"\").split(\"\\n\").filter(l => l.includes(\"=>\"));\n\nreturn lines.map(line => {\n  const [ip, snmp] = line.split(\"=>\").map(s => s.trim());\n  return { json: { ip, snmp } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        400
+      ],
+      "id": "81602f35-a4bb-4703-b735-223bb5595cee",
+      "name": "Code13"
+    },
+    {
+      "parameters": {
+        "command": "=for ip in {{ $json.ip_list }}; do\n(\n  result=$(snmpget -v2c -c public -t 1 -r 0 $ip sysDescr.0 2>/dev/null)\n  if [ -n \"$result\" ]; then\n    printf \"%s => %s\\n\" \"$ip\" \"$result\"\n  fi\n) &\ndone\nwait"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        540
+      ],
+      "id": "4c27fc95-ded0-4c22-83c5-99f4a25f4e2f",
+      "name": "Execute Command7",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address).join(\" \");\nreturn [{ json: { ip_list: ipList } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        540
+      ],
+      "id": "5bc967cc-6478-4b45-b438-591d8d594669",
+      "name": "Code14"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = ($json.stdout || \"\").split(\"\\n\").filter(l => l.includes(\"=>\"));\n\nreturn lines.map(line => {\n  const [ip, snmp] = line.split(\"=>\").map(s => s.trim());\n  return { json: { ip, snmp } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        540
+      ],
+      "id": "cbfb1988-9320-4f51-929c-e1c2bf7a4a2d",
+      "name": "Code15"
+    },
+    {
+      "parameters": {
+        "command": "=for ip in {{ $json.ip_list }}; do\n(\n  result=$(snmpget -v2c -c public -t 1 -r 0 $ip sysDescr.0 2>/dev/null)\n  if [ -n \"$result\" ]; then\n    printf \"%s => %s\\n\" \"$ip\" \"$result\"\n  fi\n) &\ndone\nwait"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        680
+      ],
+      "id": "9a0fbb58-9ae3-4e50-be43-be76f77da732",
+      "name": "Execute Command8",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address).join(\" \");\nreturn [{ json: { ip_list: ipList } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        680
+      ],
+      "id": "cf827bfe-2a07-45d8-8d6b-004d0f551140",
+      "name": "Code16"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = ($json.stdout || \"\").split(\"\\n\").filter(l => l.includes(\"=>\"));\n\nreturn lines.map(line => {\n  const [ip, snmp] = line.split(\"=>\").map(s => s.trim());\n  return { json: { ip, snmp } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        680
+      ],
+      "id": "59284d7c-2c1b-4d41-a4eb-cb26cbefe124",
+      "name": "Code17"
+    },
+    {
+      "parameters": {
+        "command": "=for ip in {{ $json.ip_list }}; do\n(\n  result=$(snmpget -v2c -c public -t 1 -r 0 $ip sysDescr.0 2>/dev/null)\n  if [ -n \"$result\" ]; then\n    printf \"%s => %s\\n\" \"$ip\" \"$result\"\n  fi\n) &\ndone\nwait"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        820
+      ],
+      "id": "70e0091d-3fc0-461a-8646-b4bacf629a3c",
+      "name": "Execute Command9",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address).join(\" \");\nreturn [{ json: { ip_list: ipList } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        820
+      ],
+      "id": "f6340dbc-902d-4f2c-ab56-406407a3ab4f",
+      "name": "Code18"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = ($json.stdout || \"\").split(\"\\n\").filter(l => l.includes(\"=>\"));\n\nreturn lines.map(line => {\n  const [ip, snmp] = line.split(\"=>\").map(s => s.trim());\n  return { json: { ip, snmp } };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2140,
+        820
+      ],
+      "id": "d4af69b9-bccb-4cb8-86b9-a3476ffca313",
+      "name": "Code19"
+    },
+    {
+      "parameters": {
+        "numberInputs": 10
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        2440,
+        0
+      ],
+      "id": "3b9ed6da-2118-40a5-99f6-8af87cf3bb81",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json[\"stdout\"] || \"\";\nconst ipList = raw.split(\"\\n\").map(ip => ip.trim()).filter(ip => ip !== \"\");\n\nreturn ipList.map(ip => ({\n  json: { ip_address: ip }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        580,
+        -360
+      ],
+      "id": "dea1b7ac-2746-4ca8-aa3d-1cee8f325d5b",
+      "name": "IP format"
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ipList = all.map(item => item.json.ip_address || item.json.ip);\nconst chunkSize = 10;\n\nconst output = [];\nfor (let i = 0; i < ipList.length; i++) {\n  const group = Math.floor(i / chunkSize) + 1;\n  const groupTag = group > 10 ? 'overflow' : group;\n\n  output.push({\n    json: {\n      ip_address: ipList[i],\n      group: groupTag\n    }\n  });\n}\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        240
+      ],
+      "id": "cb3477a7-a2c7-478d-93a8-f5152f8e34ec",
+      "name": "Seperate each 10 IP faster deal"
+    },
+    {
+      "parameters": {
+        "executeOnce": false,
+        "command": "=ip={{ $json.ip }}\nresult=$(snmpget -v2c -c public -t 1 -r 0 $ip \\\n  SNMPv2-MIB::sysName.0 \\\n  SNMPv2-MIB::sysDescr.0 \\\n  SNMPv2-MIB::sysObjectID.0 \\\n  IF-MIB::ifNumber.0 2>/dev/null)\n\nif [ -n \"$result\" ]; then\n  printf \"%s => %s\\n\" \"$ip\" \"$result\"\nfi"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2620,
+        140
+      ],
+      "id": "6d1e02db-86a7-435e-ad4b-274564cc0b49",
+      "name": "SNMP check",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $json[\"stdout\"] || \"\";\nconst ipMatch = raw.match(/^(\\d{1,3}(?:\\.\\d{1,3}){3})/);\nconst ip = ipMatch ? ipMatch[1] : \"unknown\";\n\nconst sysDescr = raw.match(/sysDescr.0\\s+=\\s+STRING:\\s+(.+)/)?.[1]?.trim() || \"unknown\";\nconst sysName = raw.match(/sysName.0\\s+=\\s+STRING:\\s+(.+)/)?.[1]?.trim() || \"unknown\";\nconst hwSku = raw.match(/HwSku:\\s*([^\\s]+)/)?.[1] || \"unknown\";\n\n// 识别逻辑\nlet vendor_sw = \"unknown\";\nlet vendor_hw = \"unknown\";\nlet snmp_module = \"unknown\";\n\nconst desc = sysDescr.toLowerCase();\nconst name = sysName.toLowerCase();\nconst sku = hwSku.toLowerCase();\n\n// 直接从 sysDescr 中提取 Software Version 的值作为 vendor_sw\nconst versionMatch = sysDescr.match(/Software Version:\\s*(\\S+)/);\nif (versionMatch) {\n  vendor_sw = versionMatch[1]; // 比如 \"SONiC.4.4.2-Enterprise_Base\"\n}\n\n// hwSkuMap（可选）单独处理硬件厂商\nconst hwSkuMap = {\n  \"AS4630-54PE\": \"Accton\",\n  \"AS5712-54X\": \"Accton\",\n  \"AS5812-54X\": \"Accton\",\n  \"AS5835-54T\": \"Accton\",\n  \"AS5835-54X\": \"Accton\",\n  \"AS6712-32X\": \"Accton\",\n  \"AS7116-54X\": \"Accton\",\n  \"AS7312-54X\": \"Accton\",\n  \"AS7312-54XS\": \"Accton\",\n  \"AS7315-27XB\": \"Accton\",\n  \"AS7326-56X\": \"Accton\",\n  \"AS7512-32X\": \"Accton\",\n  \"AS7712-32X\": \"Accton\",\n  \"AS7716-32X\": \"Accton\",\n  \"AS7716-32XB\": \"Accton\",\n  \"AS7726-32X\": \"Accton\",\n  \"AS7816-64X\": \"Accton\",\n  \"AS9716-32D\": \"Accton\",\n  \"Minipack\": \"Accton\",\n  \"Wedge 100BF-32\": \"Accton\",\n  \"Wedge 100BF-65X\": \"Accton\",\n  \"SNH60A0-320Fv2\": \"Alphanetworks\",\n  \"SNH60B0-640F\": \"Alphanetworks\",\n  \"BES2348T\": \"Alphanetworks\",\n  \"CCS-720DT-48S\": \"Arista\",\n  \"DCS-7050QX-32\": \"Arista\",\n  \"DCS-7050QX-32S\": \"Arista\",\n  \"DCS-7050CX3-32S\": \"Arista\",\n  \"DCS-7060CX-32S\": \"Arista\",\n  \"DCS-7060DX4-32\": \"Arista\",\n  \"DCS-7060PX4-32\": \"Arista\",\n  \"DCS-7060DX5-32\": \"Arista\",\n  \"DCS-7060DX5-64\": \"Arista\",\n  \"DCS-7060PX5-64\": \"Arista\",\n  \"DCS-7060DX5-64S\": \"Arista\",\n  \"DCS-7170-32CD\": \"Arista\",\n  \"DCS-7170-64C\": \"Arista\",\n  \"DCS-7260CX3-64\": \"Arista\",\n  \"DCS-7280CR3-32D4\": \"Arista\",\n  \"DCS-7280CR3-32P4\": \"Arista\",\n  \"DX010\": \"Celestica\",\n  \"E1031\": \"Celestica\",\n  \"midstone-200i\": \"Celestica\",\n  \"Silverstone\": \"Celestica\",\n  \"Seastone_2\": \"Celestica\",\n  \"E582-48X2Q\": \"Centec\",\n  \"E582-48X6Q\": \"Centec\",\n  \"CS6436-56P\": \"Cig\",\n  \"CS5435-54P\": \"Cig\",\n  \"CS6436-54P\": \"Cig\",\n  \"E3224F-ON\": \"Dell\",\n  \"N3248PXE\": \"Dell\",\n  \"N3248TE\": \"Dell\",\n  \"S5212F-ON\": \"Dell\",\n  \"S5224F-ON\": \"Dell\",\n  \"S5232F-ON\": \"Dell\",\n  \"S5248F-ON\": \"Dell\",\n  \"s5296F-ON\": \"Dell\",\n  \"S5448F-ON\": \"Dell\",\n  \"S6000-ON\": \"Dell\",\n  \"S6100-ON\": \"Dell\",\n  \"Z9100-ON\": \"Dell\",\n  \"Z9264F-ON\": \"Dell\",\n  \"Z9332F-ON\": \"Dell\",\n  \"Z9432F-ON\": \"Dell\",\n  \"Z9664F-ON\": \"Dell\",\n  \"AG5648\": \"Delta\",\n  \"AG9032V1\": \"Delta\",\n  \"AG9032V2A\": \"Delta\",\n  \"AG9064\": \"Delta\",\n  \"et-c032if\": \"Delta\",\n  \"ET-6448M\": \"Delta\",\n  \"agc032\": \"Delta\",\n  \"ES6220\": \"Embedway\",\n  \"ES6428A-X48Q2H4\": \"Embedway\",\n  \"Wedge 100-32X\": \"Facebook\",\n  \"S8810-32Q\": \"Ingrasys\",\n  \"S8900-54XC\": \"Ingrasys\",\n  \"S8900-64XC\": \"Ingrasys\",\n  \"S9100-32X\": \"Ingrasys\",\n  \"S9130-32X\": \"Ingrasys\",\n  \"S9180-32X\": \"Ingrasys\",\n  \"Cisco-8101-O32\": \"Cisco\",\n  \"Cisco-8101-O8C48\": \"Cisco\",\n  \"Cisco-8101-C64\": \"Cisco\",\n  \"M2-W6510-48V8C\": \"Micas\",\n  \"M2-W6510-48GT4V\": \"Micas\",\n  \"M2-W6510-32C\": \"Micas\",\n  \"M2-W6520-24DC8QC\": \"Micas\",\n  \"M2-W6920-32QC2X\": \"Micas\",\n  \"M2-W6930-64QC\": \"Micas\",\n  \"M2-W6940-64OC\": \"Micas\",\n  \"M2-W6940-128QC\": \"Micas\",\n  \"D6254QS\": \"Inventec\",\n  \"D6356\": \"Inventec\",\n  \"D6556\": \"Inventec\",\n  \"D7032Q\": \"Inventec\",\n  \"D7054Q\": \"Inventec\",\n  \"D7264Q\": \"Inventec\",\n  \"QFX5210-64C\": \"Juniper\",\n  \"QFX5200-32C-S\": \"Juniper\",\n  \"ARM64-AC5X_RD98DX35xx\": \"Marvell\",\n  \"ARM64-AC5X_RD98DX35xxCN9131\": \"Marvell\",\n  \"AC5X_RD98DX35xx\": \"Marvell\",\n  \"FALCON_DB98CX8580_32CD\": \"Marvell\",\n  \"FALCON_DB98CX8540_16CD\": \"Marvell\",\n  \"FALCON_DB98CX8514_10CC\": \"Marvell\",\n  \"TL10_DBMVTX9180\": \"Marvell\",\n  \"LY1200-B32H0-C3\": \"Mitac\",\n  \"Aurora 610\": \"Netberg\",\n  \"FAurora 710\": \"Netberg\",\n  \"Aurora 750\": \"Netberg\",\n  \"SN2010\": \"Nvidia\",\n  \"SN2100\": \"Nvidia\",\n  \"SN2201\": \"Nvidia\",\n  \"SN2410\": \"Nvidia\",\n  \"SN2700\": \"Nvidia\",\n  \"SN3420\": \"Nvidia\",\n  \"SN3700\": \"Nvidia\",\n  \"SN3700C\": \"Nvidia\",\n  \"SN3800\": \"Nvidia\",\n  \"SN4410\": \"Nvidia\",\n  \"SN4600C\": \"Nvidia\",\n  \"SN4600V\": \"Nvidia\",\n  \"SN4700\": \"Nvidia\",\n  \"SN5600\": \"Nvidia\",\n  \"Porsche\": \"Pegatron\",\n  \"T3032-IX7\": \"Quanta\",\n  \"T4048-IX8\": \"Quanta\",\n  \"T4048-IX8C\": \"Quanta\",\n  \"T7032-IX1B\": \"Quanta\",\n  \"T9032-IX9\": \"Quanta\",\n  \"B6510-48VS8CQ\": \"Ruijie\",\n  \"B6510-32CQ\": \"Ruijie\",\n  \"B6920-32QC-E\": \"Ruijie\",\n  \"SSE-T7132S\": \"SuperMicro\",\n  \"TCS8400-24CC8CD\": \"Tencent\",\n  \"TCS9400-128CC\": \"Tencent\",\n  \"S6301-56ST\": \"Ufispace\",\n  \"S7801-54XS\": \"Ufispace\",\n  \"S8901-54XC\": \"Ufispace\",\n  \"S9110-32X\": \"Ufispace\",\n  \"S9300-32D\": \"Ufispace\",\n  \"S9300-32DB\": \"Ufispace\",\n  \"sw-to3200k\": \"Wistron\",\n  \"6512-32r\": \"Wistron\",\n  \"OSW1800\": \"Wnc\",\n};\n\n// Step 1: 将原始 hwSkuMap 转换为全小写 key 的新对象（只需做一次）\nconst hwSkuMapLower = {};\nfor (const [key, value] of Object.entries(hwSkuMap)) {\n  hwSkuMapLower[key.toLowerCase()] = value;\n}\n\n// Step 2: 用小写后的 SKU 去查找\nvendor_hw = hwSkuMapLower[sku.toLowerCase()] || \"unknown\";\n\n// 返回当前item\nreturn {\n  ip_address: ip,\n  hostname: sysName,\n  sys_descr: sysDescr,\n  vendor_sw,\n  vendor_hw,\n  snmp_module,\n  hw_sku: hwSku,\n  updated_at: new Date().toISOString()\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3240,
+        -200
+      ],
+      "id": "8fc2a5dc-64f9-4afc-8c78-2994bf346abe",
+      "name": "vendor_mapping + gen v.09"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Ping / nmap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ping / nmap": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "IP format",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Execute Command1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command2": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Execute Command2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command3": {
+      "main": [
+        [
+          {
+            "node": "Code7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Execute Command3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command4": {
+      "main": [
+        [
+          {
+            "node": "Code9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code8": {
+      "main": [
+        [
+          {
+            "node": "Execute Command4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command5": {
+      "main": [
+        [
+          {
+            "node": "Code11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code10": {
+      "main": [
+        [
+          {
+            "node": "Execute Command5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command6": {
+      "main": [
+        [
+          {
+            "node": "Code13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code12": {
+      "main": [
+        [
+          {
+            "node": "Execute Command6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command7": {
+      "main": [
+        [
+          {
+            "node": "Code15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code14": {
+      "main": [
+        [
+          {
+            "node": "Execute Command7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Code8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "Code10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [
+          {
+            "node": "Code12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [
+          {
+            "node": "Code14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command8": {
+      "main": [
+        [
+          {
+            "node": "Code17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code16": {
+      "main": [
+        [
+          {
+            "node": "Execute Command8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command9": {
+      "main": [
+        [
+          {
+            "node": "Code19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code18": {
+      "main": [
+        [
+          {
+            "node": "Execute Command9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If9": {
+      "main": [
+        [
+          {
+            "node": "Code16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If10": {
+      "main": [
+        [
+          {
+            "node": "Code18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Code7": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Code9": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Code11": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Code13": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Code15": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Code17": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 8
+          }
+        ]
+      ]
+    },
+    "Code19": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 9
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "SNMP check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IP format": {
+      "main": [
+        [
+          {
+            "node": "Seperate each 10 IP faster deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Seperate each 10 IP faster deal": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If9",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SNMP check": {
+      "main": [
+        [
+          {
+            "node": "vendor_mapping + gen v.09",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "vendor_mapping + gen v.09": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "330f1909-b194-4db1-b40b-522500114e12",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3c4f8b2c2b4d02cf4fc2cfa5c4b6a1500ac4c1c82a34628dc509dca968f8700d"
+  },
+  "id": "z6KEZbaTVWY4Xacr",
+  "tags": []
+}
