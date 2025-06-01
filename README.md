@@ -1,6 +1,6 @@
 # OlaOla – The First Network That Speaks Human  
 **Finally, a Network That Understands You.**
-
+<br>
 ## 🌐 Why Symbiotic Network?
 
 Traditional networking is broken:
@@ -16,13 +16,13 @@ Traditional networking is broken:
 
 - **Open-source Tools**  
   Powerful yet fragmented, with steep learning curves.
-
+<br>
 ## 🌪️ **Root Cause:**  
 > "The network doesn't understand you."
 
 ## 🧬 **OlaOla's Mission:**  
 > **"Make the network understand you."**
-
+<br>
 ## 🚀 What OlaOla Offers
 
 Transform your network infrastructure with a truly intelligent, AI-powered control platform designed for modern, open, and multi-vendor environments.
