@@ -17,8 +17,8 @@ npm install                      # Install all dependencies
 npm run start                    # Start the development server
 ```
 
-# Setup Linux Shell:  
-> This server provides a WebSocket bridge to the user's local shell, enabling the frontend terminal component to directly interact with the actual shell environment.
+# :  
+> Setup Linux Shell： This server provides a WebSocket bridge to the user's local shell, enabling the frontend terminal component to directly interact with the actual shell environment.
 
 ```bash
 cd server                        # Navigate to frontend/server directory
@@ -53,7 +53,8 @@ psql -h localhost -p 54322 -U postgres -d postgres -f supabase/init/seed.sql    
 - Make sure schema and seed data are imported before creating database content
 - Localhost is your IP address of OlaOla Controller.
 
-# Step4: install N8N - N8N is a workflow automation tool. Follow these steps to set it up:
+# Step4: install N8N
+> N8N is a workflow automation tool. Follow these steps to set it up:
 
 ```bash
 cd n8n                           # Navigate to n8n directory
