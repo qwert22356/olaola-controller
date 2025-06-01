@@ -1,8 +1,6 @@
 # OlaOla – The First Network That Speaks Human  
 **Finally, a Network That Understands You.**
 
----
-
 ## 🌐 Why Symbiotic Network?
 
 Traditional networking is broken:
@@ -25,8 +23,6 @@ Traditional networking is broken:
 **OlaOla's Mission:**  
 > **"Make the network understand you."**
 
----
-
 ## 🚀 What OlaOla Offers
 
 Transform your network infrastructure with a truly intelligent, AI-powered control platform designed for modern, open, and multi-vendor environments.
@@ -44,7 +40,7 @@ Transform your network infrastructure with a truly intelligent, AI-powered contr
 
 - **Multi-vendor OS Support**  
   Community SONiC-ready.  Roadmap includes Broadcom SONiC, PLVision SONiC, Cumulus, Cisco, Arista, Huawei, HPE, Nokia, Juniper and more.
----
+
 
 ## 🧠 Intelligent Features (Coming Soon)
 
@@ -68,7 +64,7 @@ Transform your network infrastructure with a truly intelligent, AI-powered contr
 
 - **OlaOla Unifed Datahub(Future integration)**: 
   gNMI, SNMP, Syslog, Prometheus, InfluxDB  
----
+
 
 ## 🖥️ OlaOla Network Controller Highlights
 
@@ -87,14 +83,10 @@ Transform your network infrastructure with a truly intelligent, AI-powered contr
 - **Intelligent Configuration**  
   Configure devices using natural language and get smart recommendations.
 
----
-
 ## 💬 Vision
 
 > **From a network that needs you to adapt, to a network that adapts to you.**  
 > OlaOla redefines how humans and machines communicate in networking.
-
----
 
 ## 📍 Project Status
 
@@ -110,23 +102,17 @@ Transform your network infrastructure with a truly intelligent, AI-powered contr
 | Post-change Validation               | 🚧 Coming Soon |
 | Optical Anomaly Detection            | 🚧 Coming Soon |
 
----
-
 ## 📦 Tech Stack
 
 - **Frontend**: React + Tailwind + PageRenderer (schema-driven UI)  
 - **Backend**: Supabase + n8n + Python CLI Agent  
 - **AI Copilot**: LLM-based (Deepseek V3, OlaOla SONiC Model_v0.6, local inference, and retrieval)  
 
----
-
 ## 👥 Join the Mission
 
 We are building a **new kind of network** — one that collaborates, reasons, and evolves with you.
 
 > Ready to **speak human** with your infrastructure?
-
----
 
 ## 📸 Screenshots
 
@@ -137,8 +123,6 @@ We are building a **new kind of network** — one that collaborates, reasons, an
 Pls put in the picture above.
 
 </details>
-
----
 
 Visit our website: https://olaola.dev
 
