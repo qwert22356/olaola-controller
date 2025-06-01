@@ -7,7 +7,6 @@
 - npm -v
 
 > Step1: install Frontend
-## Frontend
 # Setup and run the frontend application:
 
 - cd frontend                      # Navigate to frontend directory
@@ -21,14 +20,12 @@
 - npm start                        # By default, the server runs on localhost:3001. The frontend terminal will automatically connect via WebSocket.
 
 > Step2: install FastAPI
-## FastAPI 
 # Used for Telemetry Agent
 
 - cd fastapi                       # Navigate to fastapi directory
 - docker-compose up -d             # Start FASTAPI Service
 
 Step3: install Supabase
-## Supabase
 # Supabase is an open source Firebase alternative. Follow these steps to set it up:
 
 - cd supabase                      # Navigate to supabase directory
@@ -46,7 +43,6 @@ Step3: install Supabase
 # - Localhost is your IP address of OlaOla Controller.
 
 Step4: install N8N
-## N8N
 # N8N is a workflow automation tool. Follow these steps to set it up:
 
 - cd n8n                           # Navigate to n8n directory
