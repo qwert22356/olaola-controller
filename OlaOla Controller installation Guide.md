@@ -6,7 +6,7 @@
 - node -v  
 - npm -v
 
-Step1: install Frontend
+> Step1: install Frontend
 ## Frontend
 # Setup and run the frontend application:
 
@@ -14,7 +14,13 @@ Step1: install Frontend
 - npm install                      # Install all dependencies
 - npm run start                    # Start the development server
 
-Step2: install FastAPI
+# Setup Linux Shell:  
+> This server provides a WebSocket bridge to the user's local shell, enabling the frontend terminal component to directly interact with the actual shell environment.
+- cd server                        # Navigate to frontend/server directory
+- npm install                      # Install dependencies
+- npm start                        # By default, the server runs on localhost:3001. The frontend terminal will automatically connect via WebSocket.
+
+> Step2: install FastAPI
 ## FastAPI 
 # Used for Telemetry Agent
 
