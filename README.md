@@ -120,8 +120,6 @@ We are building a **new kind of network** — one that collaborates, reasons, an
 > Ready to **speak human** with your infrastructure?
 <br>
 
-## Installation & Deployment
-
 ## OlaOla Controller installation Guide
 
 ## Node.js and npm needed
@@ -143,6 +141,7 @@ We are building a **new kind of network** — one that collaborates, reasons, an
 - cd fastapi                       # Navigate to fastapi directory
 - docker-compose up -d             # Start FASTAPI Service
 '''
+
 Step3: install Supabase
 ## Supabase
 # Supabase is an open source Firebase alternative. Follow these steps to set it up:
