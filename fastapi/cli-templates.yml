@@ -1,0 +1,6 @@
+# AI_Action_Templates
+
+get_bgp_summary: "show ip bgp summary"
+get_interface_status: "show interfaces status"
+get_arp_table: "show arp"
+# you can add more templates here
