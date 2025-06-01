@@ -6,7 +6,8 @@
 - node -v  
 - npm -v
 
-# Step1: install Frontend - Setup and run the frontend application:
+# Step1: install Frontend 
+> Setup and run the frontend application:
 
 - cd frontend                      # Navigate to frontend directory
 - npm install                      # Install all dependencies
@@ -14,16 +15,19 @@
 
 # Setup Linux Shell:  
 > This server provides a WebSocket bridge to the user's local shell, enabling the frontend terminal component to directly interact with the actual shell environment.
+
 - cd server                        # Navigate to frontend/server directory
 - npm install                      # Install dependencies
 - npm start                        # By default, the server runs on localhost:3001. The frontend terminal will automatically connect via WebSocket.
 
-# Step2: install FastAPI - Used for Telemetry Agent
+# Step2: install FastAPI 
+>Used for Telemetry Agent
 
 - cd fastapi                       # Navigate to fastapi directory
 - docker-compose up -d             # Start FASTAPI Service
 
-# Step3: install Supabase - Supabase is an open source Firebase alternative. Follow these steps to set it up:
+# Step3: install Supabase 
+> Supabase is an open source Firebase alternative. Follow these steps to set it up:
 
 - cd supabase                      # Navigate to supabase directory
 - brew install supabase/tap/supabase   # Install Supabase CLI using Homebrew
@@ -47,11 +51,12 @@
 - docker compose up -d             # Start n8n using Docker in detached mode
 - docker exec -it n8n-v2 sh        # login n8n docker to import workflows
 
-'''bash
+```bash
 for f in /home/node/workflows/*.json; do
   n8n import:workflow --input "$f"
 done
-'''
+```
+
 - go to n8n link like : http://localhost:5678/setup and register a name for local login
 - Active each flow   # Turn on the active button for each workflow
 - Go to Credentials 
