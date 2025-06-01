@@ -120,10 +120,7 @@ We are building a **new kind of network** — one that collaborates, reasons, an
 > Ready to **speak human** with your infrastructure?
 <br>
 
-## 📸 Screenshots
-
-<details>
-<summary>🖥️ OlaOla Controller UI Previews</summary>
+## 📸 Screenshots  🖥️ OlaOla Controller UI Previews
 
 **Community SONiC Switches Config Collector **  
 ![OlaOla Controller UI](./Demo/1748804041493.jpg)
@@ -145,11 +142,6 @@ We are building a **new kind of network** — one that collaborates, reasons, an
 
 **OlaOla Network AI Agent CLI for Community SONiC **  
 ![OlaOla Controller UI](./Demo/1748804646329.jpg)
-
-**OlaOla Controller UI**  
-
-
-</details>
 
 Visit our website: https://olaola.dev
 
