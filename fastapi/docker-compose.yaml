@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  telemetry-agent:
+    build:
+        context: .
+    container_name: telemetry-agent
+    ports:
+      - "8000:8000"
+    restart: always
+    environment:
+      - AGENT_TOKEN=changeme-secret-token
+    volumes:
+      - .:/app # Mount the local directory to the container
+    networks:
+      - olaola-net
+
+networks:
+  olaola-net:
+    driver: bridge
