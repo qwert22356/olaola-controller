@@ -122,25 +122,25 @@ We are building a **new kind of network** — one that collaborates, reasons, an
 
 ## 📸 Screenshots  🖥️ OlaOla Controller UI Previews
 
-**Community SONiC Switches Config Collector **  
+> Community SONiC Switches Config Collector   
 ![OlaOla Controller UI](./Demo/1748804041493.jpg)
 
-**Community SONiC Switches Panel **  
+> Community SONiC Switches Panel   
 ![OlaOla Controller UI](./Demo/1748804041493.jpg)
 
-**Community SONiC Switches Qos Status **  
+> Community SONiC Switches Qos Status   
 ![OlaOla Controller UI](./Demo/qos_status.png)
 
-**Switches Temperature **  
+> Switches Temperature   
 ![OlaOla Controller UI](./Demo/1748804045200.jpg)
 
-**Disk & SSD I/O status **  
+> Disk & SSD I/O status  
 ![OlaOla Controller UI](./Demo/1748804048936.jpg)
 
-**OlaOla Controller AI Agent Chat for Community SONiC **  
+> OlaOla Controller AI Agent Chat for Community SONiC   
 ![OlaOla Controller UI](./Demo/c62332bc-3730-4dd1-9409-16de4545efd4.png)
 
-**OlaOla Network AI Agent CLI for Community SONiC **  
+> OlaOla Network AI Agent CLI for Community SONiC   
 ![OlaOla Controller UI](./Demo/1748804646329.jpg)
 
 Visit our website: https://olaola.dev
