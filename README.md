@@ -141,3 +141,10 @@ Pls put in the picture above.
 ---
 
 Visit our website: https://olaola.dev
+
+## License
+This software is licensed under the Business Source License 1.1.
+You may use the code for non-commercial purposes.
+For commercial licensing, please contact: jason@olaola.dev
+
+- see the LICENSE file for details.
