@@ -34,7 +34,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://142.132.170.11:5678/webhook/olaola/orchestrator",
+        "url": "https://api.olaola.dev/webhook/olaola/orchestrator",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ $json }}",
