@@ -34,7 +34,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://142.132.170.11:5678/webhook/Saas/OlaOla/CLI/C2",
+        "url": "https://api.olaola.dev/webhook/Saas/OlaOla/CLI/C2",
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
