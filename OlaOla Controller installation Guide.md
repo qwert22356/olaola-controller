@@ -13,7 +13,7 @@ npm -v
 > Setup and run the frontend application:
 
 ```bash
-cd frontend                      # Navigate to frontend directory
+cd frondend                      # Navigate to frontend directory
 npm install                      # Install all dependencies
 npm run start                    # Start the development server
 ```
