@@ -14,14 +14,14 @@ npm -v
 
 ```bash
 cd frondend                      # Navigate to frontend directory
-npm install                      # Install all dependencies
-npm run start                    # Start the development server
+sudo npm install -g serve        # Install all dependencies
+serve -s dist                    # Start the development server
 ```
 
 > Setup Linux Shell： This server provides a WebSocket bridge to the user's local shell, enabling the frontend terminal component to directly interact with the actual shell environment.
 
 ```bash
-cd server                        # Navigate to frontend/server directory
+cd server                        # Navigate to frondend/server directory
 npm install                      # Install dependencies
 npm start                        # By default, the server runs on localhost:3001. The frontend terminal will automatically connect via WebSocket.
 ```
@@ -41,12 +41,16 @@ docker-compose up -d             # Start FASTAPI Service
 
 ```bash
 cd supabase                      # Navigate to supabase directory
-brew install supabase/tap/supabase   # Install Supabase CLI using Homebrew
-supabase init                    # Initialize a new Supabase project
-supabase start                   # Start the Supabase services locally
-supabase status                  # Find your Service Role Secret here
-psql -h localhost -p 54322 -U postgres -d postgres -f supabase/init/schema.sql   # Import database schema
-psql -h localhost -p 54322 -U postgres -d postgres -f supabase/init/seed.sql     # Import initial data
+wget https://github.com/supabase/cli/releases/download/v2.24.3/supabase_2.24.3_linux_amd64.deb   # download .deb 
+sudo dpkg -i supabase_2.24.3_linux_amd64.deb  # install supabase
+sudo supabase --version               # verify install result
+sudo supabase init                    # Initialize a new Supabase project
+sudo supabase start                   # Start the Supabase services locally
+sudo supabase status                  # Find your Service Role Secret here
+
+sudo apt install postgresql-client-14=14.2-1ubuntu1 libpq5=14.2-1ubuntu1   # Install psql client pls check available version 1st 'apt list -a postgresql-client-14'
+psql -h localhost -p 54322 -U postgres -d postgres -f init/schema.sql   # Import database schema
+psql -h localhost -p 54322 -U postgres -d postgres -f init/seed.sql     # Import initial data
 ```
 
 > Important notes:
