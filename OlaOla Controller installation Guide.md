@@ -83,10 +83,10 @@ done
 ## Go to Credentials 
 - Click top right corner ▼ Create Credentials 
 - Add new credential - supabase API 
-        - Host:http://host.docker.internal:54321 
+        - Host:http://olaola_controller_ip:54321 
         - Service Role Secret: ## Look at Step3
 - Add new credential - Postgre
-        - Host: host.docker.internal
+        - Host: olaola_controller_ip
         - Database:postgres
         - User:postgres
         - Password:postgres
