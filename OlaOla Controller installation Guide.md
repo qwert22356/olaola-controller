@@ -98,5 +98,38 @@ done
 - Login N8N: http://olaola_controller_ip:5678/
 - Register Your info: Username password etc...
 - Get Start
-- Click - Network_Deploy_v0.8_step1_discover-devices-snmp # Click ![image](https://github.com/user-attachments/assets/f35ce91e-0d33-4441-b1b7-d6f02a9a491a)
+- Click Each Workflow | find the picture below | Open it and then close it
+- Click Each Workflow | find the picture below | Open it and then close it
+  
+![image](https://github.com/user-attachments/assets/f35ce91e-0d33-4441-b1b7-d6f02a9a491a)
+
+![image](https://github.com/user-attachments/assets/5286dab4-4d81-4c69-985b-80d567594646)
+
+![image](https://github.com/user-attachments/assets/2ec37e3d-babb-4049-99f3-bf2138a5ff07)
+
+![image](https://github.com/user-attachments/assets/02b53851-3473-4ad4-b7cb-d2d5b79d7dd9)
+
+
+Network_deploy+Telemetry_v0.8_/api/HDtelemetry/device_layout_realtime 
+![image](https://github.com/user-attachments/assets/9981d6b1-a5cc-4b7f-af8b-9cb8cee6d34a)
+
+![image](https://github.com/user-attachments/assets/c8ca23f6-6b28-4352-8a54-ee2e9fd58561)
+http://OlaOla_Controller_IP:8000/exec_batch
+
+
+## Initialization - OlaOla Network deployment
+- 1st step: Device Discovery # put the ip address subnet range and search
+- 2nd step: Device List # click and see whether you can all switches
+- 3rd step: Config management # check password is right or wrong!
+- 4th step: Neighbor Discovery # LLDP Get
+- 5th step: store your topo # choose 4th the lldp device and select role click generate topo and save it!
+  
+## Initialization - OlaOla Network telemetry
+
+
+
+## Initializaion - OlaOla Copilot
+
+![image](https://github.com/user-attachments/assets/22df75da-755c-4f25-a3ef-27d483161853)
+
 
