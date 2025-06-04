@@ -93,3 +93,10 @@ done
         - Port:54322
 - Add Bearer Auth
         - Bearer Token:changeme-secret-token          # Get here: ./fastapi/docker-compose.yaml -> AGENT_TOKEN
+
+## Go to N8N Workflows > Activation for Database **Important**
+- Login N8N: http://olaola_controller_ip:5678/
+- Register Your info: Username password etc...
+- Get Start
+- Click - Network_Deploy_v0.8_step1_discover-devices-snmp # Click ![image](https://github.com/user-attachments/assets/f35ce91e-0d33-4441-b1b7-d6f02a9a491a)
+
