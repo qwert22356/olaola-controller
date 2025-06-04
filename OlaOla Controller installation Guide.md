@@ -65,8 +65,8 @@ psql -h localhost -p 54322 -U postgres -d postgres -f init/seed.sql     # Import
 
 ```bash
 cd n8n                           # Navigate to n8n directory
-mkdir -p ./data                  # Create a data directory for n8n
-sudo chown -R 1000:1000 ./data   # Set proper permissions for the data directory
+mkdir -p ./n8n/data                  # Create a data directory for n8n
+sudo chown -R 1000:1000 ./n8n/data   # Set proper permissions for the data directory
 docker compose up -d             # Start n8n using Docker in detached mode
 docker exec -it n8n-v2 sh        # login n8n docker to import workflows
 ```
