@@ -1,0 +1,2325 @@
+{
+  "name": "/Network_deploy+Telemetry_v0.8_/api/HDtelemetry/device_layout_realtime",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ip_address, hw_sku\nFROM networkdeploy_devices \nWHERE ip_address = '{{ $json.ip_address }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        60,
+        -380
+      ],
+      "id": "86943501-6c69-4f01-896a-1afd6c90b712",
+      "name": "Get Devices2",
+      "credentials": {
+        "postgres": {
+          "id": "s5kbyg0kk08W4Wi6",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DISTINCT ON (LOWER(hw_sku)) \n  '{{ $json.ip_address }}' AS ip_address,\n  hw_sku,\n  port_layout,\n  chip_name,\n  buffer_size,\n  panel_base_image_url,\n  panel_port_map_json\nFROM device_layout_info\nWHERE LOWER(hw_sku) ILIKE '%' || LOWER('{{ $json[\"hw_sku\"] }}') || '%'\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        280,
+        -380
+      ],
+      "id": "587d35e7-9f3f-4c40-9bcd-319f71176bd6",
+      "name": "Get Panel Layout by SKU1",
+      "credentials": {
+        "postgres": {
+          "id": "s5kbyg0kk08W4Wi6",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Panel_get",
+        "height": 220,
+        "width": 1460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        -420
+      ],
+      "id": "9702f296-85ea-4b84-aeae-fbc51cb36dad",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Panel_interfaces_get",
+        "height": 440,
+        "width": 1500
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -980,
+        60
+      ],
+      "id": "94ebd22c-bb16-4238-a11d-b2372e133aea",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d0a65c33-8723-472a-a2c5-18aaca5e8bd0",
+              "name": "=ip_address",
+              "value": "={{ $json['body.ip_list'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2080,
+        80
+      ],
+      "id": "e0f82622-adb8-452d-8b9b-1fc1619a2dbc",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "tableId": "datahub_panel_metrics",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "ip_address",
+              "fieldValue": "={{ $json.ip_address }}"
+            },
+            {
+              "fieldId": "interfaces",
+              "fieldValue": "={{ $json.interfaces }}"
+            },
+            {
+              "fieldId": "timestamp",
+              "fieldValue": "={{ $json.timestamp }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        820,
+        180
+      ],
+      "id": "ce977e2f-4b95-4b78-97c4-4bf6a62208f2",
+      "name": "Supabase3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Xqd90VCHAjAgcs5I",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "ip_address",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1660,
+        -80
+      ],
+      "id": "f416874e-98f8-4a7c-8a51-b16001a8bca3",
+      "name": "Merge8"
+    },
+    {
+      "parameters": {
+        "tableId": "device_layout_panel_info",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "ip_address",
+              "fieldValue": "={{ $json.ip_address }}"
+            },
+            {
+              "fieldId": "hw_sku",
+              "fieldValue": "={{ $json.hw_sku }}"
+            },
+            {
+              "fieldId": "port_layout",
+              "fieldValue": "={{ $json.port_layout }}"
+            },
+            {
+              "fieldId": "chip_name",
+              "fieldValue": "={{ $json.chip_name }}"
+            },
+            {
+              "fieldId": "buffer_size",
+              "fieldValue": "={{ $json.buffer_size }}"
+            },
+            {
+              "fieldId": "panel_base_image_url",
+              "fieldValue": "={{ $json.panel_base_image_url }}"
+            },
+            {
+              "fieldId": "panel_port_map_json",
+              "fieldValue": "={{ $json.physical_ports }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "=now()"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        820,
+        -380
+      ],
+      "id": "941f6510-01ad-4790-b6cd-3d84abd91650",
+      "name": "Supabase4",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Xqd90VCHAjAgcs5I",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## platform_info_get",
+        "height": 240,
+        "width": 1500
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -980,
+        680
+      ],
+      "id": "1e686b0d-c120-4fc5-969b-d0bd16966923",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## Basic_info_get",
+        "height": 220,
+        "width": 1460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        -700
+      ],
+      "id": "2e90a678-e27a-4e61-8165-78bddb95cd32",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ip_address, hw_sku, hostname \nFROM networkdeploy_devices \nWHERE ip_address = '{{ $json.ip_address }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        60,
+        -660
+      ],
+      "id": "2edfa8fd-fe87-4dc8-84fa-7dfc9dc3cc7d",
+      "name": "Get Devices3",
+      "credentials": {
+        "postgres": {
+          "id": "s5kbyg0kk08W4Wi6",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "ip_address",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1820,
+        -300
+      ],
+      "id": "1ed86a90-d454-45d6-a845-2318a0349554",
+      "name": "Merge9"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "ip_address",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        2220,
+        -140
+      ],
+      "id": "3ec43980-2897-4676-acea-9c54f7b8e18d",
+      "name": "Merge11"
+    },
+    {
+      "parameters": {
+        "content": "## other_info_get",
+        "height": 2860,
+        "width": 1820
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -980,
+        1780
+      ],
+      "id": "09d3fb09-2765-448f-885c-84bae3384885",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "ip_address",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        2500,
+        840
+      ],
+      "id": "be97ff20-e77a-4010-8846-1337475ed0eb",
+      "name": "Merge12"
+    },
+    {
+      "parameters": {
+        "executeOnce": false,
+        "command": "=curl -k -X GET \"https://{{ $json[\"ip_address\"] }}/restconf/data/openconfig-interfaces:interfaces\" \\\n  -H \"accept: application/yang-data+json\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        360
+      ],
+      "id": "04bd1b0d-a520-4a62-a34e-ff53e2580231",
+      "name": "Execute Command4"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -320,
+        220
+      ],
+      "id": "25cb6e08-1d94-4c9c-b29d-526a77a683e2",
+      "name": "Merge13"
+    },
+    {
+      "parameters": {
+        "jsCode": " const stdout = $input.first().json.results[0].stdout || \"\";\n const lines = stdout.split(\"\\n\");\n\n const aliasMap = {};\n\n for (const line of lines) {\n   const match = line.match(/^(Ethernet\\d+)\\s+(Eth\\d+)$/);\n   if (match) {\n     const physical = match[1];\n     const alias = match[2];\n     aliasMap[alias] = physical;\n   }\n }\n\nreturn [{ json: { alias_map: aliasMap, ip_address: $json.ip_address } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        360
+      ],
+      "id": "0908e9f2-7a3d-46ba-8086-b2ae755b761d",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// alias_map： { Eth1: Ethernet9 } → { Ethernet9: Eth1 }\nconst aliasMap = $json.alias_map || {};\nconst reverseAliasMap = {};\nfor (const [alias, port] of Object.entries(aliasMap)) {\n  reverseAliasMap[port] = alias;\n}\n\nconst ip = $json.ip_address;\nconst timestamp = $json.timestamp;\nconst interfaces = $json.interfaces || [];\n\nconst updatedInterfaces = interfaces.map(intf => {\n  const originalAlias = intf.physical_port;\n  const mapped = reverseAliasMap[originalAlias] || originalAlias;\n\n  return {\n    ...intf,\n    physical_port: mapped\n  };\n});\n\nreturn [{\n  json: {\n    ip_address: ip,\n    timestamp,\n    interfaces: updatedInterfaces\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        180
+      ],
+      "id": "8bc257f8-8b24-40ac-b688-6386654ac2df",
+      "name": "replace_physical_port_with_alias_map1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        460,
+        180
+      ],
+      "id": "b0394748-7e08-452c-a626-2a19c35c4c5d",
+      "name": "Merge14"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/panel-metrics/fetch",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2940,
+        80
+      ],
+      "id": "eab0ace8-0bf6-4ee5-9b60-d8f6cd4f2a96",
+      "name": "Webhook1",
+      "webhookId": "2a125f30-ba25-4bd4-aa87-caf01951ef48"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -2080,
+        -80
+      ],
+      "id": "9b32bb43-5775-458b-befb-d931a78497e3",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.ip_list",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2700,
+        80
+      ],
+      "id": "3ee5d9e8-c518-4948-8b38-f25f46bc269d",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = items[0];\nconst interfaces = item.json.interfaces || [];\nconst l2status = item.json[\"l2_forwarding\"]?.[\"interfaces_status\"] || [];\n\nfor (let i of interfaces) {\n  if (!i.status || i.status === \"\") {\n    // 找到对应 interface 名称（如 \"Ethernet1\"）\n    const match = l2status.find(l2 => l2.interface === i.logical_port || l2.alias === i.physical_port);\n    if (match && match.oper) {\n      i.status = match.oper;\n    }\n  }\n}\n\nreturn [{ json: item.json }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2520,
+        4560
+      ],
+      "id": "db9ed7f1-161c-4ba6-b68f-4fa1d92d918b",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.1.77:8000/exec_batch",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"ip\": \"{{ $json.ip_address }}\",\n    \"username\": \"{{ $json.username }}\",\n    \"password\": \"{{ $json.password }}\",\n    \"commands\": [\n        \"show interfaces counters\",\n        \"show ip bgp neighbors\",\n        \"show ip bgp summary\",\n        \"show ip bgp network\",\n        \"show ip route\",\n        \"show queue counters --json\",\n        \"show mac\",\n        \"show mac aging-time\",\n        \"show vlan brief\",\n        \"show arp\",\n        \"show interfaces status\",\n        \"ps -eo pid,comm,pcpu,pmem,etime,state --sort=-pcpu | head -n 20\",\n        \"df -hT / /host /var/log\",\n        \"lsblk -o NAME,SIZE,MODEL,ROTA,MOUNTPOINT\",\n        \"cat /sys/block/sda/stat\"\n    ]\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -220,
+        1980
+      ],
+      "id": "c790bf4f-77a3-4df7-9da4-0ebca60c1e4d",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "5V1GYnBBJnC1lvBN",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 6,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        520,
+        2920
+      ],
+      "id": "26123c72-cbb2-4988-90e7-367cd25e0ad0",
+      "name": "Merge16"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        40,
+        4020
+      ],
+      "id": "5933ff20-8bd9-4590-98cc-3da6cf99c32c",
+      "name": "Merge15"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mergedByIp = {};\n\n// 判断日期是否合法\nfunction isValidDate(d) {\n  return d instanceof Date && !isNaN(d);\n}\n\nfor (const item of items) {\n  const ip = item.json.ip_address;\n  const rawTs = item.json.timestamp;\n  const timestamp = isValidDate(new Date(rawTs)) ? new Date(rawTs) : new Date(0); // fallback to epoch\n\n  if (!mergedByIp[ip]) {\n    mergedByIp[ip] = {\n      ip_address: ip,\n      timestamp: timestamp,\n      bgp_status: [],\n      qos_policy: []\n    };\n  }\n\n  // 只在合法时间且更晚时更新\n  if (isValidDate(timestamp) && timestamp > mergedByIp[ip].timestamp) {\n    mergedByIp[ip].timestamp = timestamp;\n  }\n\n  for (const key of Object.keys(item.json)) {\n    if (key === 'ip_address' || key === 'timestamp') continue;\n\n    if (['bgp_summary', 'neighbors', 'bgp_routes'].includes(key)) {\n      mergedByIp[ip].bgp_status.push({ [key]: item.json[key] });\n    } else if (['qos', 'analysis'].includes(key)) {\n      mergedByIp[ip].qos_policy.push({ [key]: item.json[key] });\n    } else {\n      mergedByIp[ip][key] = item.json[key];\n    }\n  }\n}\n\nconst output = Object.values(mergedByIp).map(record => ({\n  json: {\n    ...record,\n    timestamp: isValidDate(record.timestamp) ? record.timestamp.toISOString() : null\n  }\n}));\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        740,
+        2980
+      ],
+      "id": "b8fe6f16-6213-4575-b506-553760320adf",
+      "name": "Code26"
+    },
+    {
+      "parameters": {
+        "tableId": "datahub_agent_raw_v0_8",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "ip_address",
+              "fieldValue": "={{ $('Edit Fields1').item.json.ip_address }}"
+            },
+            {
+              "fieldId": "bandwidth",
+              "fieldValue": "={{ $json.bandwidth }}"
+            },
+            {
+              "fieldId": "bgp_status",
+              "fieldValue": "={{ $json.bgp_status }}"
+            },
+            {
+              "fieldId": "route_table",
+              "fieldValue": "={{ $json.ip_routes }}"
+            },
+            {
+              "fieldId": "qos_policy",
+              "fieldValue": "={{ $json.qos_policy }}"
+            },
+            {
+              "fieldId": "l2_forwarding",
+              "fieldValue": "={{ $json.L2_forwarding }}"
+            },
+            {
+              "fieldId": "system_process",
+              "fieldValue": "={{ $json.system_process }}"
+            },
+            {
+              "fieldId": "timestamp",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        980,
+        2980
+      ],
+      "id": "fa04d5ee-13a6-442f-912a-81435203a79b",
+      "name": "Supabase1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Xqd90VCHAjAgcs5I",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const merged = {\n  ip_address: '',\n  system_process: {\n    processes: [],\n    disk_usage: [],\n    disk_stat: [],\n    block_info: []\n  },\n  timestamp: ''\n};\n\nfor (const item of items) {\n  const data = item.json;\n\n  if (data.ip_address) {\n    merged.ip_address = data.ip_address;\n  }\n\n  if (data.system_process?.processes) {\n    merged.system_process.processes = data.system_process.processes;\n  }\n\n  if (data.filesystem) {\n    merged.system_process.disk_usage.push(data);\n  }\n\n  if (data.reads_completed !== undefined && data.writes_completed !== undefined) {\n    merged.system_process.disk_stat.push(data);\n  }\n\n  if (data.name && data.model !== undefined && data.size && data.rota !== undefined) {\n    merged.system_process.block_info.push(data);\n  }\n\n  if (data.timestamp) {\n    merged.timestamp = data.timestamp;\n  }\n}\n\nreturn [{ json: merged }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        280,
+        4040
+      ],
+      "id": "4676e101-3048-47d2-8ddc-40f17f081c2c",
+      "name": "system all"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json[\"stdout\"] || \"\";\nconst startIndex = raw.indexOf(\"NAME\");\nconst lsblkText = startIndex !== -1 ? raw.slice(startIndex) : raw;\n\n// 提取表格内容\nconst tableStart = lsblkText.indexOf(\"NAME\");\nconst tableBody = lsblkText.slice(tableStart).trim();\n\n// 分行\nconst lines = tableBody.split(\"\\n\").map(l => l.trim()).filter(l => l);\nconst headerLine = lines[0];\nconst dataLines = lines.slice(1);\n\n// 字段分割工具\nfunction parseLine(line) {\n  return line.split(/\\s+/);\n}\n\nconst results = [];\n\nfor (const line of dataLines) {\n  const parts = parseLine(line);\n  if (parts.length < 2) continue;\n\n  results.push({\n    name: parts[0] || \"\",\n    size: parts[1] || \"\",\n    model: parts[2] || \"\",\n    rota: parts[3] || \"\",\n    mountpoint: parts[4] || \"\",\n    timestamp: new Date().toISOString()\n  });\n}\n\nreturn results.map(item => ({ json: item }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        4480
+      ],
+      "id": "5f8c4cfa-466a-42ea-b0a2-59366e4c28bd",
+      "name": "lsblk -o PArse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json[\"stdout\"] || \"\";\n\n// 提取有效数值行\nconst lines = raw.split(\"\\n\").map(l => l.trim()).filter(l => l && /^\\d/.test(l));\nif (lines.length === 0) return [];\n\nconst fields = [\n  \"reads_completed\", \"reads_merged\", \"sectors_read\", \"read_time_ms\",\n  \"writes_completed\", \"writes_merged\", \"sectors_written\", \"write_time_ms\",\n  \"ios_in_progress\", \"io_time_ms\", \"io_time_weighted_ms\",\n  \"discards_completed\", \"discards_merged\", \"sectors_discarded\", \"discard_time_ms\"\n];\n\nconst values = lines[0].split(/\\s+/).map(Number);\nconst result = {};\n\nfor (let i = 0; i < Math.min(fields.length, values.length); i++) {\n  result[fields[i]] = values[i];\n}\n\n// ✨ 异常判断逻辑\nlet summary = \"✅ 正常\";\n\n// 条件触发异常标记\nif (\n  result.reads_completed === 0 &&\n  result.writes_completed === 0\n) {\n  summary = \"❌ 无读写活动\";\n} else if (\n  result.ios_in_progress > 10\n) {\n  summary = \"⚠️ I/O 队列堆积\";\n} else if (\n  result.read_time_ms / (result.reads_completed || 1) > 1000 ||\n  result.write_time_ms / (result.writes_completed || 1) > 1000\n) {\n  summary = \"⚠️ I/O 延迟过高\";\n} else if (\n  result.discard_time_ms > 100000\n) {\n  summary = \"⚠️ SSD Trim 操作耗时过长\";\n}\n\nresult.summary = summary;\nresult.timestamp = new Date().toISOString();\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        4320
+      ],
+      "id": "13558cd3-ba2e-40cf-950b-32b54214065b",
+      "name": "cat /sys/block/sda/stat parse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json[\"stdout\"] || \"\";\nconst startIndex = raw.indexOf(\"Filesystem\");\nconst text = startIndex !== -1 ? raw.slice(startIndex) : raw;\n\nconst lines = text.split(\"\\n\").map(l => l.trim()).filter(l => l);\nconst header = lines[0].split(/\\s+/);\nconst dataLines = lines.slice(1);\n\nconst results = [];\n\nfunction getSummary(usePercent, mountpoint) {\n  const usage = parseInt(usePercent.replace(\"%\", \"\"));\n  if (!mountpoint) return \"⚠️ 未挂载\";\n  if (usage >= 60) return `⚠️ 使用率高 (${usage}%)`;\n  return \"✅ 正常\";\n}\n\nfor (const line of dataLines) {\n  const parts = line.split(/\\s+/);\n  if (parts.length < 7) continue;\n\n  results.push({\n    filesystem: parts[0],\n    type: parts[1],\n    size: parts[2],\n    used: parts[3],\n    avail: parts[4],\n    use_percent: parts[5],\n    mountpoint: parts.slice(6).join(\" \"), // 合并可能带空格的路径\n    summary: getSummary(parts[5], parts[6]),\n    timestamp: new Date().toISOString()\n  });\n}\n\nreturn results.map(r => ({ json: r }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        4180
+      ],
+      "id": "392cd4c1-dd19-4868-b32a-f4174a838490",
+      "name": "df -hT parse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = $json.stdout || \"\";\nconst lines = stdout.split(\"\\n\").filter(l => l.trim() !== \"\");\n\n// 跳过标题行\nconst processList = [];\n\nfor (const line of lines.slice(1)) {\n  // 使用正则捕捉 6 个字段（pid, command, %cpu, %mem, elapsed, state）\n  // COMMAND 允许空格（非贪婪）\n  const match = line.match(/^\\s*(\\d+)\\s+(.+?)\\s+([\\d.]+)\\s+([\\d.]+)\\s+([\\d:-]+)\\s+(\\w)$/);\n\n  if (match) {\n    const [, pid, command, cpu, mem, elapsed, state] = match;\n\n    processList.push({\n      pid: parseInt(pid),\n      process_name: command.trim(),\n      cpu_percent: parseFloat(cpu),\n      mem_percent: parseFloat(mem),\n      elapsed_time: elapsed,\n      status: state\n    });\n  }\n}\n\nreturn [{\n  json: {\n    system_process: {\n      processes: processList\n    },\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        4020
+      ],
+      "id": "81c1a872-c0ae-4242-9c6b-2b9e413d9d4d",
+      "name": "ps -eo parse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst result = {\n  ip_address: items[0].json.ip_address || \"\",\n  L2_forwarding: {},\n  timestamp: new Date().toISOString()\n};\n\nfor (const item of items) {\n  const json = item.json;\n\n  if (json.L2_forwarding) {\n    if (json.L2_forwarding.mac_table) {\n      result.L2_forwarding.mac_table = json.L2_forwarding.mac_table;\n    }\n    if (json.L2_forwarding.vlan_table) {\n      result.L2_forwarding.vlan_table = json.L2_forwarding.vlan_table;\n    }\n    if (json.L2_forwarding.arp_table) {\n      result.L2_forwarding.arp_table = json.L2_forwarding.arp_table;\n    }\n  }\n\n  if (json.interfaces_counters) {\n    result.L2_forwarding.interfaces_counters = json.interfaces_counters;\n  }\n\n  if (json.interfaces_status) {\n    result.L2_forwarding.interfaces_status = json.interfaces_status;\n  }\n}\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        3480
+      ],
+      "id": "73df8225-18dd-47ff-9906-4a58cf3c52be",
+      "name": "L2_forwarding"
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = $json.stdout || \"\";\nconst lines = stdout.split(\"\\n\");\n\nconst macTable = [];\nlet agingTime = null;\n\nfor (const line of lines) {\n  const trimmed = line.trim();\n\nif ($input.first().json.command === \"show mac aging-time\" && $input.first().json.stdout) {\n  const trimmed = $input.first().json.stdout.trim();\n  const agingMatch = trimmed.match(/Aging time.*?is\\s+(\\d+)\\s*seconds/i);\n  if (agingMatch) {\n    agingTime = parseInt(agingMatch[1], 10);\n  }\n}\n\n  // 提取 MAC 表项（跳过标题和统计行）\n  if (/^\\d+\\s+\\d+\\s+[0-9a-f]{2}(:[0-9a-f]{2}){5}/i.test(trimmed)) {\n    const parts = trimmed.split(/\\s+/);\n    macTable.push({\n      vlan: parts[1],\n      mac: parts[2],\n      port: parts[3],\n      type: parts[4] || \"unknown\"\n    });\n  }\n}\n\nreturn [{\n  json: {\n    L2_forwarding: {\n      mac_table: macTable\n    },\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        3240
+      ],
+      "id": "9150e074-026e-4bd8-b2bd-34362beecbf5",
+      "name": "show mac+show mac aging-time parse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = $json.stdout || \"\";\nconst lines = stdout.split(\"\\n\");\n\nif (stdout.length > 300000 || lines.length > 8000) {\n  throw new Error(\"VLAN output too large.\");\n}\n\nlet vlanTable = [];\nlet vlanSummary = [];\nlet currentVlan = null;\nlet processedLines = 0;\n\nfor (const rawLine of lines) {\n  const line = rawLine.trim();\n\n  if (\n    line.startsWith(\"+\") ||\n    line.startsWith(\"=\") ||\n    line === \"\" ||\n    line.includes(\"VLAN ID\")\n  ) continue;\n\n  if (++processedLines > 1500) {\n    throw new Error(\"Exceeded max line count. Malformed input?\");\n  }\n\n  // 🚀 不再用正则，而是 split(\"|\")\n  const parts = line.split(\"|\").map(p => p.trim());\n  if (parts.length < 8) continue;\n\n  const vlan_id = parts[1];\n  const ip = parts[2];\n  const port = parts[3];\n  const tag = parts[4];\n  const proxy_arp = parts[5];\n  const proxy_nd = parts[6];\n  const dhcp_helper = parts[7];\n\n  if (vlan_id && /^\\d+$/.test(vlan_id)) {\n    currentVlan = {\n      vlan_id,\n      ip_address: ip || \"\",\n      ports: [],\n      port_tagging: tag || \"\",\n      proxy_arp: proxy_arp || \"\",\n      proxy_nd: proxy_nd || \"\",\n      dhcp_helper: dhcp_helper || \"\"\n    };\n    if (port) currentVlan.ports.push(port);\n    vlanTable.push(currentVlan);\n  } else if (currentVlan && port) {\n    if (currentVlan.ports.length < 100) {\n      currentVlan.ports.push(port);\n    }\n  }\n}\n\nfor (const vlan of vlanTable) {\n  const issues = [];\n\n  if (!vlan.ports || vlan.ports.length === 0) issues.push(\"empty_vlan\");\n  if (vlan.ports.length > 20) issues.push(\"many_ports\");\n  if (!vlan.ip_address) issues.push(\"no_ip\");\n\n  if (issues.length > 0) {\n    vlanSummary.push({\n      vlan_id: vlan.vlan_id,\n      issues,\n      port_count: vlan.ports.length\n    });\n  }\n}\n\nreturn [{\n  json: {\n    L2_forwarding: {\n      vlan_table: vlanTable\n    },\n    analysis: {\n      vlan_summary: vlanSummary\n    },\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        3400
+      ],
+      "id": "bf54f1f9-cf95-4801-9634-05a4e493176b",
+      "name": "show vlan brief parse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = $json.stdout || \"\";\nconst lines = stdout.split(\"\\n\");\n\nlet arpTable = [];\nlet fieldIndexes = [];\nlet fieldNames = [];\nlet inArpSection = false;\n\n// 标准化字段名映射\nconst normalizeField = (name) => {\n  const n = name.toLowerCase();\n  if (n.startsWith(\"addr\")) return \"ip_address\";\n  if (n.startsWith(\"mac\")) return \"mac_address\";\n  if (n.startsWith(\"iface\")) return \"interface\";\n  if (n === \"vlan\") return \"vlan\";\n  if (n === \"vrf\") return \"vrf\";\n  if (n === \"status\") return \"status\";\n  return name.replace(/\\s+/g, \"_\").toLowerCase();\n};\n\nfor (let i = 0; i < lines.length; i++) {\n  const line = lines[i].trim();\n\n  // 跳过空行或非内容\n  if (!line || line.startsWith(\"Total number\") || line.startsWith(\"logout\")) continue;\n\n  // 检测 ARP 表头\n  if (line.toLowerCase().includes(\"macaddress\") && line.toLowerCase().includes(\"iface\")) {\n    inArpSection = true;\n    // 保存字段起始位置\n    fieldIndexes = [...line.matchAll(/\\S+/g)].map(m => m.index);\n    fieldNames = [...line.match(/\\S+/g)].map(normalizeField);\n    continue;\n  }\n\n  // 跳过表头下划线线条\n  if (inArpSection && line.startsWith(\"----\")) continue;\n\n  if (inArpSection && fieldIndexes.length > 0) {\n    let row = {};\n    for (let j = 0; j < fieldIndexes.length; j++) {\n      const start = fieldIndexes[j];\n      const end = fieldIndexes[j + 1] || line.length;\n      const key = fieldNames[j];\n      row[key] = line.slice(start, end).trim();\n    }\n    arpTable.push(row);\n  }\n}\n\nreturn [{\n  json: {\n    L2_forwarding: {\n      arp_table: arpTable\n    },\n    timestamp: new Date().toISOString()\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        3540
+      ],
+      "id": "9041d615-7495-4c46-aee6-b4e8d3e0024e",
+      "name": "show arp parse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = $json.stdout || \"\";\nconst lines = stdout.split(\"\\n\");\n\n// 过滤掉表头、分隔线等，只保留数据行\nconst dataLines = lines.filter(line => /^ *(Ethernet|PortChannel|eth\\d+)/.test(line));\n\nconst result = {\n  timestamp: new Date().toISOString(),\n  interfaces_status: []\n};\n\nfor (const line of dataLines) {\n  const parts = line.trim().split(/\\s{2,}/);  // 两个以上空格作为分隔符\n\n  result.interfaces_status.push({\n    interface: parts[0],\n    lanes: parts[1],\n    speed: parts[2],\n    mtu: parts[3],\n    fec: parts[4],\n    alias: parts[5],\n    vlan: parts[6],\n    oper: parts[7],\n    admin: parts[8],\n    molink: parts[9],\n    type: parts[10],\n    asym_pfc: parts[11] || null\n  });\n}\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        3820
+      ],
+      "id": "fa2ce045-579b-4d6d-a4df-e163b71c9d70",
+      "name": "show interfaces stat parse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = $json.stdout || \"\";\nconst lines = stdout.split(\"\\n\");\n\n// 提取数据开始行\nconst dataLines = lines.filter(line => /^ *(Ethernet|PortChannel|eth\\d+)/.test(line));\n\nconst result = {\n  timestamp: new Date().toISOString(),\n  interfaces_counters: [],\n};\n\nfor (const line of dataLines) {\n  const parts = line.trim().split(/\\s{2,}|\\s+(?=\\d)/g); // 处理空格+数字分界\n  \n  const [\n    iface, state, rx_ok, rx_bps, rx_util, rx_err, rx_drp, rx_ovr,\n    tx_ok, tx_bps, tx_util, tx_err, tx_drp, tx_ovr\n  ] = parts;\n\n  const item = {\n    iface,\n    state,\n    rx_ok: parseInt(rx_ok.replace(/,/g, \"\")) || 0,\n    rx_bps,\n    rx_util,\n    rx_err: parseInt(rx_err.replace(/,/g, \"\")) || 0,\n    rx_drp: parseInt(rx_drp.replace(/,/g, \"\")) || 0,\n    rx_ovr: parseInt(rx_ovr.replace(/,/g, \"\")) || 0,\n    tx_ok: parseInt(tx_ok.replace(/,/g, \"\")) || 0,\n    tx_bps,\n    tx_util,\n    tx_err: parseInt(tx_err.replace(/,/g, \"\")) || 0,\n    tx_drp: parseInt(tx_drp.replace(/,/g, \"\")) || 0,\n    tx_ovr: parseInt(tx_ovr.replace(/,/g, \"\")) || 0\n  };\n\n  result.interfaces_counters.push(item);\n}\n\nreturn [{ json: result }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        3680
+      ],
+      "id": "eb6b347b-554d-4e2e-bed3-84b255d434f1",
+      "name": "show interfaces counters parse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const merged = $input.all();\n\nlet ip = \"\";\nconst qos = {};\nlet timestamp = new Date().toISOString();\n\nfor (const item of merged) {\n  const data = item.json;\n\n  // 记录 IP\n  if (data.ip_address) ip = data.ip_address;\n\n  // 合并 qos 字段\n  if (data.qos) {\n    Object.assign(qos, data.qos);\n  }\n\n  // 更新时间戳（可选：你也可以保留最早或最晚）\n  if (data.timestamp) timestamp = data.timestamp;\n}\n\nreturn [\n  {\n    json: {\n      ip_address: ip,\n      qos,\n      timestamp,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        3060
+      ],
+      "id": "071f5c79-04ac-41d3-ac9a-5901df04d38b",
+      "name": "Combined qos info"
+    },
+    {
+      "parameters": {
+        "jsCode": "function humanBytes(bytes) {\n  const units = ['B', 'KB', 'MB', 'GB', 'TB'];\n  let i = 0;\n  while (bytes >= 1024 && i < units.length - 1) {\n    bytes /= 1024;\n    i++;\n  }\n  return `${bytes.toFixed(2)} ${units[i]}`;\n}\n\nfunction humanPackets(packets) {\n  const units = ['pkt', 'Kpkt', 'Mpkt', 'Gpkt', 'Tpkt'];\n  let i = 0;\n  while (packets >= 1000 && i < units.length - 1) {\n    packets /= 1000;\n    i++;\n  }\n  return `${packets.toFixed(2)} ${units[i]}`;\n}\n\nconst input = $json;\nconst qos = input.qos || {};\nconst ip = input.ip_address || \"unknown\";\n\nconst summary = [];\nconst highTxQueues = [];\nconst dropQueues = [];\nconst dropPorts = new Set();\nconst highTxPorts = new Set();\nconst modeSet = new Set();\n\n// ✅ Process queue counters\nif (qos.counters && Array.isArray(qos.counters)) {\n  for (const item of qos.counters) {\n    const txBytes = item.tx_bytes || 0;\n    const dropPkts = item.dropped_packets || 0;\n\n    if (txBytes > 1e9) {\n      highTxQueues.push(item);\n      highTxPorts.add(item.port);\n    }\n    if (dropPkts > 0) {\n      dropQueues.push(item);\n      dropPorts.add(item.port);\n    }\n  }\n\n  if (highTxQueues.length > 0) {\n    summary.push(`⚠️ ${highTxQueues.length} queues have transmitted > 1GB of data (${highTxPorts.size} ports involved)`);\n  }\n\n  if (dropQueues.length > 0) {\n    summary.push(`❌ ${dropQueues.length} queues experienced packet loss (${dropPorts.size} ports involved)`);\n  }\n\n  // 🚨 Overlapping ports with both high traffic and drops\n  const overlap = [...dropPorts].filter(p => highTxPorts.has(p));\n  if (overlap.length > 0) {\n    summary.push(`🚨 ${overlap.length} ports have both high traffic and packet drops. Recommended for focused investigation: ${overlap.join(', ')}`);\n  }\n}\n\n// ✅ Check scheduling mode consistency\nif (qos.schedule && Array.isArray(qos.schedule)) {\n  for (const item of qos.schedule) {\n    if (item.mode) modeSet.add(item.mode);\n  }\n  if (modeSet.size === 1 && modeSet.has(\"WRR\")) {\n    summary.push(\"✅ All ports use WRR scheduling mode consistently\");\n  } else {\n    summary.push(`⚠️ Detected mixed scheduling modes. Modes present: ${[...modeSet].join(', ')}`);\n  }\n}\n\n// ✅ DSCP to TC mapping coverage\nconst dscpCoverage = Object.keys(qos.dscp_to_tc || {}).length;\nif (dscpCoverage < 64) {\n  summary.push(`⚠️ DSCP to TC mapping does not cover all 64 DSCP values (currently covers: ${dscpCoverage})`);\n} else {\n  summary.push(\"✅ Complete DSCP → TC mapping coverage\");\n}\n\n// ✅ TC to Queue mapping inspection\nconst tcQueueCount = Object.keys(qos.tc_to_queue || {}).length;\nsummary.push(`🔢 Number of TC → Queue mappings: ${tcQueueCount}`);\n\n// ✅ Final output structure\nreturn [\n  {\n    json: {\n      ip_address: ip,\n      timestamp: new Date().toISOString(),\n      qos: qos,\n      analysis: {\n        summary,\n        high_tx_queues: highTxQueues,\n        drop_queues: dropQueues,\n        drop_ports: [...dropPorts],\n        high_tx_ports: [...highTxPorts]\n      }\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        3060
+      ],
+      "id": "9cc44d70-f68d-4ead-9b7a-f0ce99fdcbf5",
+      "name": "ENGQOS1"
+    },
+    {
+      "parameters": {
+        "jsCode": "let raw = $json.stdout || \"\";\nconst result = {\n  qos: {\n    counters: []\n  },\n  timestamp: new Date().toISOString()\n};\n\nfunction humanBytes(bytes) {\n  const units = ['B', 'KB', 'MB', 'GB', 'TB'];\n  let i = 0;\n  while (bytes >= 1024 && i < units.length - 1) {\n    bytes /= 1024;\n    i++;\n  }\n  return `${bytes.toFixed(2)} ${units[i]}`;\n}\n\nfunction humanPackets(packets) {\n  const units = ['pkt', 'Kpkt', 'Mpkt', 'Gpkt', 'Tpkt'];\n  let i = 0;\n  while (packets >= 1000 && i < units.length - 1) {\n    packets /= 1000;\n    i++;\n  }\n  return `${packets.toFixed(2)} ${units[i]}`;\n}\n\ntry {\n  const parsed = JSON.parse(raw);\n\n  for (const [port, queueData] of Object.entries(parsed)) {\n    // 过滤 queueData 中非对象（如 time 字段）\n    if (typeof queueData !== 'object' || Array.isArray(queueData)) continue;\n\n    for (const [queue, stats] of Object.entries(queueData)) {\n      // 过滤掉类似 \"time\": \"...\" 的项\n      if (typeof stats !== 'object' || Array.isArray(stats)) continue;\n\n      const packets = parseInt(stats[\"totalpacket\"] || stats[\"Counter/pkts\"] || 0);\n      const bytes = parseInt(stats[\"totalbytes\"] || stats[\"Counter/bytes\"] || 0);\n      const droppedPackets = parseInt(stats[\"droppacket\"] || stats[\"Drop/pkts\"] || 0);\n      const droppedBytes = parseInt(stats[\"dropbytes\"] || stats[\"Drop/bytes\"] || 0);\n\n      result.qos.counters.push({\n        port,\n        queue,\n        tx_packet: packets,\n        tx_packet_human: humanPackets(packets),\n        tx_bytes: bytes,\n        tx_bytes_human: humanBytes(bytes),\n        dropped_packets: droppedPackets,\n        dropped_packet_human: humanPackets(droppedPackets),\n        dropped_bytes: droppedBytes,\n        dropped_bytes_human: humanBytes(droppedBytes)\n      });\n    }\n  }\n} catch (e) {\n  result.qos.counters_error = \"Failed to parse counters JSON: \" + e.message;\n}\n\nreturn [{ json: result }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        3060
+      ],
+      "id": "4afcbb9d-d619-4a8d-9818-4a1093368f29",
+      "name": "show queue counters"
+    },
+    {
+      "parameters": {
+        "jsCode": "const merged = $input.all();\n\n// Extract stdout containing Codes\nfor (const item of merged) {\n  if (item.json?.stdout && item.json.stdout.includes(\"Codes:\")) {\n    raw = item.json.stdout;\n    if (item.json?.ip_address) ip = item.json.ip_address;\n    break;\n  }\n}\n\nif (!raw) {\n  return [{\n    json: {\n      error: \"No routing table data found\",\n      ip_address: ip,\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\n// Clean and split the output\nconst lines = raw.split(/\\r?\\n/)\n  .map(line => line.trim())\n  .filter(line => line.length > 0);\n\nconst routes = [];\nlet currentRoute = null;\n\nfor (let i = 0; i < lines.length; i++) {\n  const line = lines[i];\n  \n  // Skip header lines\n  if (line.startsWith(\"Codes:\") || \n      line.includes(\"kernel route\") || \n      line.includes(\"IS-IS\") ||\n      line.includes(\"OSPF\") ||\n      line.includes(\"BGP\") ||\n      line.includes(\"EIGRP\") ||\n      line.includes(\"NHRP\") ||\n      line.includes(\"Table\") ||\n      line.includes(\"VNC\") ||\n      line.includes(\"Babel\") ||\n      line.includes(\"SHARP\") ||\n      line.includes(\"PBR\") ||\n      line.includes(\"OpenFabric\")) {\n    continue;\n  }\n  \n  // Match route lines that start with protocol codes\n  const routeMatch = line.match(/^([SKCREOITBVAFPN])([*>\\s]*)\\s*(\\d+\\.\\d+\\.\\d+\\.\\d+\\/\\d+)\\s*(.*)$/);\n  \n  if (routeMatch) {\n    const [, protocol, flags, network, details] = routeMatch;\n    \n    currentRoute = {\n      prefix: network,\n      protocol: protocol,\n      paths: []\n    };\n    \n    const isActive = flags.includes('*');\n    const isInstalled = flags.includes('>');\n    \n    // Parse the route details\n    if (details) {\n      parseRouteDetails(currentRoute, details, isActive, isInstalled);\n    }\n    \n    routes.push(currentRoute);\n  }\n  // Handle continuation lines (lines that don't start with a protocol code)\n  else if (currentRoute && line.match(/^\\s*\\[.*\\]|via\\s+|is directly connected/)) {\n    parseRouteDetails(currentRoute, line, true, true);\n  }\n}\n\nfunction parseRouteDetails(route, details, isActive, isInstalled) {\n  details = details.trim();\n  \n  // Handle \"via\" routes (next-hop routes)\n  const viaMatch = details.match(/\\[([^\\]]+)\\]\\s+via\\s+([\\d.]+)(?:,\\s*(\\w+))?(?:,\\s*(.+))?/);\n  if (viaMatch) {\n    const [adminDist, metric] = viaMatch[1].split('/');\n    \n    const pathObj = {\n      active: isActive,\n      installed: isInstalled,\n      metric: `${adminDist}/${metric || '0'}`,\n      weight: 1,\n      nexthop: viaMatch[2]\n    };\n    \n    if (viaMatch[3]) {\n      pathObj.interface = viaMatch[3];\n    }\n    \n    if (viaMatch[4]) {\n      pathObj.age = viaMatch[4];\n    }\n    \n    route.paths.push(pathObj);\n    return;\n  }\n  \n  // Handle directly connected routes\n  const connectedMatch = details.match(/is directly connected,\\s*(\\w+)(?:,\\s*(.+))?/);\n  if (connectedMatch) {\n    const pathObj = {\n      active: isActive,\n      connected: true,\n      installed: isInstalled,\n      interface: connectedMatch[1] + \",\"\n    };\n    \n    route.paths.push(pathObj);\n    return;\n  }\n  \n  // Handle other route types with basic parsing\n  if (details.length > 0 && !details.includes('unreachable') && !details.includes('rejected')) {\n    // Try to extract basic info for other route types\n    const basicMatch = details.match(/(\\w+)(?:,\\s*(.+))?/);\n    if (basicMatch) {\n      const pathObj = {\n        active: isActive,\n        installed: isInstalled\n      };\n      \n      // If it looks like an interface, treat as connected\n      if (basicMatch[1].match(/^(eth|Ethernet|Loopback|Vlan)/i)) {\n        pathObj.connected = true;\n        pathObj.interface = basicMatch[1] + \",\";\n      } else {\n        pathObj.details = details;\n      }\n      \n      route.paths.push(pathObj);\n    }\n  }\n}\n\n// Filter out routes without paths and return in the desired format\nconst validRoutes = routes.filter(route => route.paths.length > 0);\n\nreturn [{\n  json: {\n\n    ip_routes: validRoutes,\n\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        2880
+      ],
+      "id": "ecd09e14-9996-4f8d-90e5-c0dbf7847a1b",
+      "name": "show ip route parse"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nlet ip = \"\";\nlet raw = \"\";\n\nfor (const item of items) {\n  if (item.json?.ip_address) ip = item.json.ip_address;\n  if (item.json?.stdout) raw = item.json.stdout;\n}\n\nconst lines = raw.split(\"\\n\").map(line => line.trim());\nlet currentPrefix = \"\";\nconst routes = [];\n\nfor (const line of lines) {\n  if (!line || line.startsWith(\"Network\") || line.startsWith(\"Status codes\")) continue;\n\n  const regex = /^([\\*\\> =]+)?\\s*(\\d+\\.\\d+\\.\\d+\\.\\d+\\/\\d+)?\\s+(\\d+\\.\\d+\\.\\d+\\.\\d+)\\s+\\d+\\s+\\d+\\s+([\\d\\s]+)([i\\?])$/;\n  const match = line.match(regex);\n\n  if (match) {\n    const flags = (match[1] || \"\").trim();\n    const prefix = match[2] || currentPrefix;\n    const nexthop = match[3];\n    const as_path = match[4].trim().split(/\\s+/);\n    const origin = match[5];\n\n    if (prefix) currentPrefix = prefix;\n\n    routes.push({\n      status_flags: flags,\n      prefix: currentPrefix,\n      nexthop,\n      as_path,\n      origin\n    });\n  }\n}\n\nreturn [\n  {\n    json: {\n      ip_address: ip,\n      bgp_routes: routes,\n      timestamp: new Date().toISOString()\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        2720
+      ],
+      "id": "5587f5f0-a115-41ef-9306-ce3785c6e86d",
+      "name": "show ip bgp network parse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();  // Merge后的两个输入项\nlet ip = \"\";\nlet raw = \"\";\n\nfor (const item of items) {\n  if (item.json?.ip_address) {\n    ip = item.json.ip_address;\n  }\n  if (item.json?.stdout) {\n    raw = item.json.stdout;\n  }\n}\n\n// 修复点：允许首条邻居信息无换行符头\nconst blocks = raw.split(/(?=\\bBGP neighbor is )/);\n\nconst neighbors = [];\n\nfor (const block of blocks) {\n  const lines = block.split(\"\\n\").map(l => l.trim());\n  if (lines.length === 0) continue;\n\n  const neighbor = {\n    afi_safi: [],\n    stats: {},\n    messages: {}\n  };\n\n  // ✅ 基本字段提取\n  const m = lines[0].match(/BGP neighbor is (\\S+), remote AS (\\d+), local AS (\\d+)/);\n  if (!m) continue;\n\n  neighbor.neighbor_ip = m[1];\n  neighbor.remote_as = parseInt(m[2]);\n  neighbor.local_as = parseInt(m[3]);\n\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i];\n\n    if (line.includes(\"Hostname:\")) {\n      neighbor.hostname = line.split(\":\")[1].trim();\n    }\n\n    if (line.includes(\"local router ID\")) {\n      const m2 = line.match(/remote router ID (\\S+), local router ID (\\S+)/);\n      if (m2) {\n        neighbor.remote_router_id = m2[1];\n        neighbor.local_router_id = m2[2];\n      }\n    }\n\n    if (line.includes(\"BGP state =\")) {\n      const m3 = line.match(/BGP state = (\\S+), up for (.+)/);\n      if (m3) {\n        neighbor.state = m3[1];\n        neighbor.uptime = m3[2];\n      }\n    }\n\n    if (line.includes(\"Hold time is\")) {\n      const m4 = line.match(/Hold time is (\\d+) seconds, keepalive interval is (\\d+)/);\n      if (m4) {\n        neighbor.hold_time = parseInt(m4[1]);\n        neighbor.keepalive = parseInt(m4[2]);\n      }\n    }\n\n    if (line.startsWith(\"For address family:\")) {\n      const afi = line.split(\":\")[1].trim();\n      neighbor.afi_safi.push(afi);\n    }\n\n    if (line.includes(\"accepted prefixes\")) {\n      const m5 = line.match(/(\\d+) accepted prefixes/);\n      const currentAfi = neighbor.afi_safi[neighbor.afi_safi.length - 1];\n      if (m5 && currentAfi) {\n        neighbor.stats[currentAfi] = {\n          accepted_prefixes: parseInt(m5[1])\n        };\n      }\n    }\n\n    if (line.includes(\"Keepalives:\")) {\n      const msg = lines.slice(i, i + 6).join(\" \");\n      const opens = msg.match(/Opens:\\s+(\\d+)\\s+(\\d+)/);\n      const updates = msg.match(/Updates:\\s+(\\d+)\\s+(\\d+)/);\n      const keepalives = msg.match(/Keepalives:\\s+(\\d+)\\s+(\\d+)/);\n\n      if (opens) neighbor.messages.opens = { sent: parseInt(opens[1]), rcvd: parseInt(opens[2]) };\n      if (updates) neighbor.messages.updates = { sent: parseInt(updates[1]), rcvd: parseInt(updates[2]) };\n      if (keepalives) neighbor.messages.keepalives = { sent: parseInt(keepalives[1]), rcvd: parseInt(keepalives[2]) };\n    }\n\n    if (line.includes(\"Connections established\")) {\n      const m6 = line.match(/Connections established (\\d+); dropped (\\d+)/);\n      if (m6) {\n        neighbor.connections = {\n          established: parseInt(m6[1]),\n          dropped: parseInt(m6[2])\n        };\n      }\n    }\n\n    if (line.startsWith(\"Local host:\")) {\n      const m7 = line.match(/Local host: (\\S+), Local port: (\\d+).*Foreign host: (\\S+), Foreign port: (\\d+)/);\n      if (m7) {\n        neighbor.local_host = m7[1];\n        neighbor.local_port = parseInt(m7[2]);\n        neighbor.remote_host = m7[3];\n        neighbor.remote_port = parseInt(m7[4]);\n      }\n    }\n\n    if (line.startsWith(\"Nexthop:\")) {\n      neighbor.nexthop = line.split(\":\")[1].trim();\n    }\n  }\n\n  neighbors.push(neighbor);\n}\n\nreturn [{\n  json: {\n    ip_address: ip,\n    neighbors: neighbors,\n    timestamp: new Date().toISOString()\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        2580
+      ],
+      "id": "111db54f-1902-444a-b4db-c144a0ce9fc7",
+      "name": "show ip bgp neighbors parse1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.item.json;\n\nconst validNeighbors = input.neighbors.filter(n => {\n  return (\n    typeof n.neighbor_ip === \"string\" &&\n    /^\\d{1,3}(\\.\\d{1,3}){3}$/.test(n.neighbor_ip) &&  // 合法 IP\n    typeof n.remote_as === \"number\" &&\n    typeof n.received_prefixes === \"number\" &&\n    typeof n.afi_safi === \"string\"\n  );\n});\n\nconst summary = {\n  ipv4_neighbors: 0,\n  ipv6_neighbors: 0,\n  vpnv4_neighbors: 0,\n  vpnv6_neighbors: 0,\n  mpls_neighbors: 0,\n  established: 0,\n  not_established: 0,\n  total_prefixes: 0\n};\n\nfor (const n of validNeighbors) {\n  const afi = n.afi_safi.toLowerCase();\n  if (summary.hasOwnProperty(`${afi}_neighbors`)) {\n    summary[`${afi}_neighbors`] += 1;\n  }\n\n  if (n.state === \"Established\") {\n    summary.established += 1;\n    summary.total_prefixes += n.received_prefixes;\n  } else {\n    summary.not_established += 1;\n  }\n}\n\nreturn [{\n  json: {\n    ip_address: input.ip_address,\n    bgp_summary: summary,\n    neighbors: validNeighbors,\n    timestamp: input.timestamp\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        2420
+      ],
+      "id": "b8b7f69c-ede5-437c-b6e6-33c49fa444fb",
+      "name": "filter_bgp_summary1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const all = $input.all();\nconst ip = all.find(i => i.json.ip_address)?.json.ip_address || \"unknown\";\nconst raw = all.find(i => i.json.stdout)?.json.stdout || \"\";\nconst lines = raw.split(\"\\n\");\n\nlet current_af = null; // ipv4 / ipv6 / vpnv4 / vpnv6 / mpls\nconst neighborMap = {\n  ipv4: [],\n  ipv6: [],\n  vpnv4: [],\n  vpnv6: [],\n  mpls: []\n};\nconst summary = {\n  ipv4: { total: 0, established: 0, not_established: 0, total_prefixes: 0 },\n  ipv6: { total: 0, established: 0, not_established: 0, total_prefixes: 0 },\n  vpnv4: { total: 0, established: 0, not_established: 0, total_prefixes: 0 },\n  vpnv6: { total: 0, established: 0, not_established: 0, total_prefixes: 0 },\n  mpls: { total: 0, established: 0, not_established: 0, total_prefixes: 0 }\n};\n\nfor (const line of lines) {\n  if (line.includes(\"IPv4 Unicast Summary\")) current_af = \"ipv4\";\n  else if (line.includes(\"IPv6 Unicast Summary\")) current_af = \"ipv6\";\n  else if (line.includes(\"VPNv4 Unicast Summary\")) current_af = \"vpnv4\";\n  else if (line.includes(\"VPNv6 Unicast Summary\")) current_af = \"vpnv6\";\n  else if (line.includes(\"L2VPN EVPN Summary\")) current_af = \"mpls\";\n  else if (!current_af) continue;\n\n  const parts = line.trim().split(/\\s+/);\n\n  // 只抓可能是 BGP 行的结构：IP地址 + AS号 + 前缀数\n  if (/^\\d+\\.\\d+\\.\\d+\\.\\d+/.test(parts[0]) || /^[a-fA-F0-9:]+/.test(parts[0])) {\n    const neighbor_ip = parts[0];\n    const remote_as = parseInt(parts[2]);\n    const uptime = parts[8];\n    const stateOrPrefix = parts[9];\n    const received_prefixes = /^\\d+$/.test(stateOrPrefix) ? parseInt(stateOrPrefix) : 0;\n    const status = /^\\d+$/.test(stateOrPrefix) ? \"Established\" : stateOrPrefix;\n\n    summary[current_af].total += 1;\n    if (status === \"Established\") {\n      summary[current_af].established += 1;\n      summary[current_af].total_prefixes += received_prefixes;\n    } else {\n      summary[current_af].not_established += 1;\n    }\n\n    neighborMap[current_af].push({\n      neighbor_ip,\n      remote_as,\n      afi_safi: current_af,\n      state: status,\n      uptime,\n      received_prefixes\n    });\n  }\n}\n\nreturn [{\n  json: {\n    ip_address: ip,\n    bgp_summary: {\n      ipv4_neighbors: summary.ipv4.total,\n      ipv6_neighbors: summary.ipv6.total,\n      vpnv4_neighbors: summary.vpnv4.total,\n      vpnv6_neighbors: summary.vpnv6.total,\n      mpls_neighbors: summary.mpls.total,\n      established: summary.ipv4.established + summary.ipv6.established + summary.vpnv4.established + summary.vpnv6.established + summary.mpls.established,\n      not_established: summary.ipv4.not_established + summary.ipv6.not_established + summary.vpnv4.not_established + summary.vpnv6.not_established + summary.mpls.not_established,\n      total_prefixes: summary.ipv4.total_prefixes + summary.ipv6.total_prefixes + summary.vpnv4.total_prefixes + summary.vpnv6.total_prefixes + summary.mpls.total_prefixes\n    },\n    neighbors: [\n      ...neighborMap.ipv4,\n      ...neighborMap.ipv6,\n      ...neighborMap.vpnv4,\n      ...neighborMap.vpnv6,\n      ...neighborMap.mpls\n    ],\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        2400
+      ],
+      "id": "15dd8135-ca45-4e17-a77e-502b91c45ff4",
+      "name": "show ip bgp summary parse1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        60,
+        3440
+      ],
+      "id": "e87212b0-a53f-417a-a3dd-2b8cc359e4bf",
+      "name": "Merge17"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        280,
+        2600
+      ],
+      "id": "36be3ec5-c66d-4862-a521-0e252da3c501",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = $json.stdout || \"\";\nconst lines = stdout.split(\"\\n\");\n\n// 提取数据开始行\nconst dataLines = lines.filter(line => /^ *(Ethernet|PortChannel|eth\\d+)/.test(line));\n\nconst result = {\n  timestamp: new Date().toISOString(),\n  interfaces_counters: [],\n};\n\nfor (const line of dataLines) {\n  const parts = line.trim().split(/\\s{2,}|\\s+(?=\\d)/g); // 处理空格+数字分界\n  \n  const [\n    iface, state, rx_ok, rx_bps, rx_util, rx_err, rx_drp, rx_ovr,\n    tx_ok, tx_bps, tx_util, tx_err, tx_drp, tx_ovr\n  ] = parts;\n\n  const item = {\n    iface,\n    state,\n    rx_ok: parseInt(rx_ok.replace(/,/g, \"\")) || 0,\n    rx_bps,\n    rx_util,\n    rx_err: parseInt(rx_err.replace(/,/g, \"\")) || 0,\n    rx_drp: parseInt(rx_drp.replace(/,/g, \"\")) || 0,\n    rx_ovr: parseInt(rx_ovr.replace(/,/g, \"\")) || 0,\n    tx_ok: parseInt(tx_ok.replace(/,/g, \"\")) || 0,\n    tx_bps,\n    tx_util,\n    tx_err: parseInt(tx_err.replace(/,/g, \"\")) || 0,\n    tx_drp: parseInt(tx_drp.replace(/,/g, \"\")) || 0,\n    tx_ovr: parseInt(tx_ovr.replace(/,/g, \"\")) || 0\n  };\n\n  result.interfaces_counters.push(item);\n}\n\nreturn [{ json: result }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        2220
+      ],
+      "id": "85e24401-5e43-42a3-b763-a8be7f10b444",
+      "name": "show interfaces counters parse"
+    },
+    {
+      "parameters": {
+        "jsCode": "const counters = $json.interfaces_counters || [];\n\nconst bandwidth = {};\n\n// 提取百分比数字（如 \"38.25%\" → 38.25）\nfunction parsePercent(str) {\n  if (!str || typeof str !== \"string\") return 0;\n  const match = str.match(/([\\d.]+)/);\n  return match ? parseFloat(match[1]) : 0;\n}\n\n// 速率换算函数保持不变（可选）\nfunction parseRateToBitPerSec(str) {\n  if (!str || typeof str !== 'string') return 0;\n  const match = str.match(/([\\d.]+)\\s*(B|KB|MB|GB|TB)?\\/s/i);\n  if (!match) return 0;\n\n  const value = parseFloat(match[1]);\n  const unit = (match[2] || \"B\").toUpperCase();\n\n  const multiplier = {\n    B: 8,\n    KB: 8 * 1e3,\n    MB: 8 * 1e6,\n    GB: 8 * 1e9,\n    TB: 8 * 1e12\n  };\n\n  return value * (multiplier[unit] || 8);  // 输出 bit/s\n}\n\nfunction formatBitRate(bitsPerSec) {\n  const units = ['b/s', 'Kb/s', 'Mb/s', 'Gb/s', 'Tb/s'];\n  let value = bitsPerSec;\n  let unitIndex = 0;\n\n  while (value >= 1000 && unitIndex < units.length - 1) {\n    value /= 1000;\n    unitIndex++;\n  }\n\n  return `${value.toFixed(2)} ${units[unitIndex]}`;\n}\n\n// 遍历接口\nfor (const iface of counters) {\n  const name = iface.iface;\n\n  const rx_raw = iface.rx_bps || \"0.00 B/s\";\n  const tx_raw = iface.tx_bps || \"0.00 B/s\";\n\n  const rx_bits = parseRateToBitPerSec(rx_raw);\n  const tx_bits = parseRateToBitPerSec(tx_raw);\n\n  const rx_util = parsePercent(iface.rx_util || \"0%\");\n  const tx_util = parsePercent(iface.tx_util || \"0%\");\n  const avg_util = ((rx_util + tx_util) / 2).toFixed(2) + \"%\";\n\n  bandwidth[name] = {\n    rx_rate: formatBitRate(rx_bits),\n    tx_rate: formatBitRate(tx_bits),\n    bandwidth_utilization: avg_util\n  };\n}\n\nreturn [{\n  json: {\n    bandwidth\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        2400
+      ],
+      "id": "a5b65ee4-62c8-4590-a6a0-acd74284850c",
+      "name": "mapping bandwidth"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2300,
+        2740
+      ],
+      "id": "b66a3e29-1a26-430e-bdf2-72051f13f94c",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show ip bgp summary",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d7ea6fbc-1435-45fb-b025-a669ab06c93a"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5deba44e-f9e8-4b9a-a7e7-b52414a19421",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show ip bgp neighbors",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fc055019-7add-4680-9d1f-e0f61a3941a1",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show ip bgp network",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7d94a508-7f32-437e-bdcf-ed6156fe46ca",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show ip route",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e99f8e88-1b5f-4bba-a3f4-4e3a077ab36c",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show queue counters --json",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "89677841-e937-40f0-8cc8-8a6c3c43a1bf",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show arp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a06ea136-4bb1-4413-8c7f-eb8f5d861d8d",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show interfaces counters",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8aef1f9a-a3d4-49ae-86d5-49448635c20b",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "ps -eo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "58d87e12-f8dd-4c46-b76d-02ac959c0c11",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "df",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9f0ebe61-811c-46ed-9914-4fe1a15edf15",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "lsblk",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4ff4273f-8b63-4d34-8589-5db085f6d8af",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "cat",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e5d5fc03-be6c-4e5a-adf3-3ae608b63e40",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show mac",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9e5e79de-58b6-4c26-9279-a23d40107776",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show mac aging-time",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3dcbc9b6-48ec-413d-b03c-b9c6ccea7985",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show vlan brief",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "001c83a4-309f-410c-be49-179f3e2839fe",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "show interfaces status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2080,
+        2740
+      ],
+      "id": "6502ee7b-9466-40d4-8f1a-dd5a136c0b46",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -500,
+        3320
+      ],
+      "id": "ffafd13a-c13e-40d0-908e-129175054e59",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.1.77:8000/exec_batch",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"ip\": \"{{ $json.ip_address }}\",\n    \"username\": \"{{ $json.username }}\",\n    \"password\": \"{{ $json.password }}\",\n    \"commands\": [\n        \"show platform temperature\",\n        \"show platform fan\",\n        \"show platform summary\",\n        \"show platform psu\"\n    ]\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -220,
+        720
+      ],
+      "id": "69fe1e0a-eb38-4278-9d7d-89852da8f337",
+      "name": "Platform info",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "5V1GYnBBJnC1lvBN",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const ip = items[0].json.ip_address || \"unknown\";\nconst results = items[0].json.results || [];\nconst now = new Date().toISOString();\n\nconst fanList = [];\nconst psuList = [];\nconst tempList = [];\nconst transceiverList = [];\nconst chassisList = [];\n\n// === FAN ===\nconst fanOutput = results.find(r => r.command.includes(\"show platform fan\"))?.stdout || \"\";\nconst fanLines = fanOutput.split(\"\\n\").slice(2).filter(l => l.trim());\n\nfanLines.forEach(line => {\n  const parts = line.trim().split(/\\s{2,}/);\n  if (parts.length >= 7) {\n    fanList.push({\n      drawer_name: parts[0] || \"\",\n      led_status: parts[1] || \"\",\n      name: parts[2] || \"\",\n      speed: (parts[3] || \"\").replace('%', ''),\n      direction: parts[4] || \"\",\n      presence: (parts[5] || \"\").toLowerCase() === \"present\",\n      status: (parts[6] || \"\").toLowerCase() === \"ok\",\n      timestamp: parts[7] || now,\n      model: \"\",\n      serial: \"\",\n      is_replaceable: \"True\",\n      speed_tolerance: \"\",\n      speed_target: \"\"\n    });\n  }\n});\n\n// === PSU ===\nconst psuOutput = results.find(r => r.command.includes(\"show platform psu\"))?.stdout || \"\";\nconst psuLines = psuOutput.split(\"\\n\").slice(2).filter(l => l.trim());\n\npsuLines.forEach(line => {\n  const parts = line.trim().split(/\\s{2,}/);\n  if (parts.length >= 9) {\n    psuList.push({\n      name: parts[0] || \"\",\n      model: parts[1] || \"\",\n      serial: parts[2] || \"\",\n      revision: parts[3] || \"\",\n      voltage: parts[4] || \"\",\n      current: parts[5] || \"\",\n      power: parts[6] || \"\",\n      status: (parts[7] || \"\").toUpperCase() === \"OK\",\n      led_status: parts[8] || \"\",\n      presence: \"true\",\n      temp: \"\",\n      temp_threshold: \"\",\n      voltage_min_threshold: \"\",\n      voltage_max_threshold: \"\",\n      is_replaceable: \"True\",\n      power_warning_suppress_threshold: \"\",\n      power_critical_threshold: \"\",\n      power_overload: \"\",\n      input_voltage: \"\",\n      input_current: \"\",\n      max_power: \"\"\n    });\n  }\n});\n\n// === TEMPERATURE ===\nconst tempOutput = results.find(r => r.command.includes(\"show platform temperature\"))?.stdout || \"\";\nconst tempLines = tempOutput.split(\"\\n\").slice(2).filter(l => l.trim());\n\ntempLines.forEach(line => {\n  const parts = line.trim().split(/\\s{2,}/);\n  if (parts.length >= 8) {\n    tempList.push({\n      name: parts[0] || \"\",\n      temperature: parseFloat(parts[1]) || 0,\n      high_threshold: parseFloat(parts[2]) || 0,\n      low_threshold: parseFloat(parts[3]) || 0,\n      critical_high_threshold: parseFloat(parts[4]) || 0,\n      critical_low_threshold: parseFloat(parts[5]) || 0,\n      warning_status: (parts[6] || \"\").toLowerCase() === \"true\",\n      timestamp: parts[7] || now,\n      minimum_temperature: \"\",\n      maximum_temperature: \"\",\n      is_replaceable: \"False\"\n    });\n  }\n});\n\n// === CHASSIS_INFO from show platform summary ===\nconst summaryOutput = results.find(r => r.command.includes(\"show platform summary\"))?.stdout || \"\";\nconst summaryLines = summaryOutput.split(\"\\n\");\n\nlet name = \"\";\nlet model = \"\";\nlet revision = \"\";\nlet serial = \"\";\n\nsummaryLines.forEach(line => {\n  if (line.includes(\"Platform:\")) {\n    name = line.split(\"Platform:\")[1].trim();\n  } else if (line.includes(\"HwSKU:\")) {\n    model = line.split(\"HwSKU:\")[1].trim();\n  } else if (line.includes(\"Hardware Revision:\")) {\n    revision = line.split(\"Hardware Revision:\")[1].trim();\n  } else if (line.includes(\"Serial Number:\")) {\n    serial = line.split(\"Serial Number:\")[1].trim();\n  }\n});\n\nchassisList.push({\n  name: name || \"unknown\",\n  model: model || \"unknown\",\n  psu_num: \"\",  \n  revision: revision || \"\",\n  serial: serial || \"\"\n});\n\n// === Unified Structure ===\nreturn [\n  {\n    json: {\n      ip_address: ip,\n      platform: {\n        FAN: fanList,\n        PSU: psuList,\n        TEMPERATURE_SENSOR: tempList,\n        TRANSCEIVER: transceiverList,\n        CHASSIS: chassisList\n      },\n      timestamp: now\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        720
+      ],
+      "id": "b9673299-79cd-41d3-8217-19fc2713ae7e",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "tableId": "datahub_platform_devices",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "ip_address",
+              "fieldValue": "={{ $json.ip_address }}"
+            },
+            {
+              "fieldId": "platform",
+              "fieldValue": "={{ $json.platform }}"
+            },
+            {
+              "fieldId": "timestamp",
+              "fieldValue": "={{ $json.timestamp }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        20,
+        960
+      ],
+      "id": "d4e3f98e-2b9c-4ddd-8c30-1463431c4a50",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Xqd90VCHAjAgcs5I",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = items[0].json;\n\nconst mapped = {\n  asic: null,\n  inlet: null,\n  outlet: null,\n  others: [],\n};\n\nconst matchMap = {\n  asic: ['ASIC_TEMP', 'MAC_TEMP'],\n  inlet: ['INLET_TEMP', 'Inlet', 'MAC_IN_TEMP'],\n  outlet: ['OUTLET_TEMP', 'Outlet', 'MAC_OUT_TEMP'],\n};\n\nfor (const sensor of item.platform.TEMPERATURE_SENSOR || []) {\n  const name = sensor.name;\n\n  if (matchMap.asic.includes(name)) {\n    mapped.asic = sensor;\n  } else if (matchMap.inlet.includes(name)) {\n    mapped.inlet = sensor;\n  } else if (matchMap.outlet.includes(name)) {\n    mapped.outlet = sensor;\n  } else {\n    mapped.others.push(sensor);\n  }\n}\n\n// ✅ return item\nitem.platform.TEMPERATURE_SENSOR_PARSED = mapped;\n\nreturn [{ json: item }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        720
+      ],
+      "id": "313b49bf-443d-4e51-b4e8-98f9e12b175d",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -200,
+        960
+      ],
+      "id": "929472f8-068e-4a3c-9e3a-9f52ca7f0a97",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.1.77:8000/exec_batch",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"ip\": \"{{ $json.ip_address }}\",\n    \"username\": \"{{ $json.username }}\",\n    \"password\": \"{{ $json.password }}\",\n    \"commands\": [\n        \"show interfaces alias\"\n    ]\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -120,
+        40
+      ],
+      "id": "bfb58e8e-fcaa-4cd8-bc1b-ff1b11b7d5ab",
+      "name": "Platform info1",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "5V1GYnBBJnC1lvBN",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2940,
+        -80
+      ],
+      "id": "3850e039-ca89-46bf-bd5b-8d83c8b702ef",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2480,
+        80
+      ],
+      "id": "08e13332-6d77-4bcc-b46c-abdaac05bc69",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "function parseSegment(segment) {\n  const ports = [];\n  const parts = segment.split('+').join(',').split(',');\n  parts.forEach(part => {\n    const match = part.trim().match(/(\\d+)\\*?(\\d+G)/i);\n    if (match) {\n      const count = parseInt(match[1]);\n      const speed = match[2].toUpperCase();\n      ports.push({ count, speed });\n    }\n  });\n  return ports;\n}\n\nfunction buildPortBlockSmart(portList, startIndex, xStart, maxCols, yStart, type) {\n  const result = [];\n  let current = 0;\n\n  portList.forEach(port => {\n    for (let i = 0; i < port.count; i++) {\n      const index = startIndex + current;\n      const col = current % maxCols;\n      const row = Math.floor(current / maxCols);\n\n      result.push({\n        physical_port: `Eth${index + 1}`,\n        x: xStart + col,\n        y: yStart + row,\n        speed: port.speed,\n        type: type\n      });\n\n      current++;\n    }\n  });\n\n  return result;\n}\n\n// 主流程\nconst devices = $items(\"Get Devices2\");\nconst layouts = $items(\"Get Panel Layout by SKU1\");\n\nreturn devices.map(device => {\n  const sku = device.json.hw_sku.toLowerCase();\n  const ip = device.json.ip_address;\n\n  const panel = layouts.find(p =>\n    p.json.hw_sku.toLowerCase().includes(sku)\n  );\n\n  if (!panel) return null;\n\n  const layout = (panel.json.port_layout || '').replaceAll('×', '*').replaceAll('X', '*');\n  const segments = layout.split('+');\n\n  const mainSegment = segments[0] || '';\n  const uplinkCombined = segments.slice(1).join('+'); // 合并后续段\n\n  const mainPorts = parseSegment(mainSegment);\n  const uplinkPorts = parseSegment(uplinkCombined);\n\n  const totalMainCount = mainPorts.reduce((sum, p) => sum + p.count, 0);\n  const totalUplinkCount = uplinkPorts.reduce((sum, p) => sum + p.count, 0);\n  const totalCount = totalMainCount + totalUplinkCount;\n\n  // 判断面板高度（推导 y 排数）\n  const maxCols = 12;\n  const panelRows = totalCount <= 48 ? 2 : totalCount <= 64 ? 4 : 8;\n\n  const mainBlock = buildPortBlockSmart(mainPorts, 0, 0, maxCols, 0, 'main');\n  const uplinkStartY = Math.ceil(totalMainCount / maxCols);\n  const uplinkBlock = buildPortBlockSmart(\n    uplinkPorts,\n    totalMainCount,\n    0,\n    maxCols,\n    uplinkStartY,\n    'uplink'\n  );\n\n  return {\n    json: {\n      ip_address: ip,\n      hw_sku: panel.json.hw_sku,\n      port_layout: layout,\n      chip_name: panel.json.chip_name,\n      buffer_size: panel.json.buffer_size,\n      panel_base_image_url: panel.json.panel_base_image_url || null,\n      physical_ports: [...mainBlock, ...uplinkBlock],\n      created_at: new Date().toISOString()\n    }\n  };\n}).filter(item => item !== null);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        -380
+      ],
+      "id": "9cd9fe45-e92a-4611-9488-f244f79a0974",
+      "name": "Port mapping"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ip_address, username, password\nFROM public.networkdeploy_devices_config_cli\nWHERE ip_address = '{{ $json.ip_address }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -480,
+        -120
+      ],
+      "id": "9df74371-8ac3-4776-8267-c9c7e47560dd",
+      "name": "Check Passwd",
+      "credentials": {
+        "postgres": {
+          "id": "s5kbyg0kk08W4Wi6",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const now = new Date().toISOString();\nconst stdout = $json.stdout;\nconst ip_address = $json.ip_address || $json.ip || 'unknown';\n\nconst parsed = JSON.parse(stdout || '{}');\nconst interfaces = parsed[\"openconfig-interfaces:interfaces\"]?.interface || [];\n\nfunction formatBytes(bytes) {\n  if (bytes < 1024) return bytes + ' B';\n  const units = ['KB', 'MB', 'GB', 'TB', 'PB'];\n  let value = bytes / 1024;\n  let i = 0;\n  while (value >= 1024 && i < units.length - 1) {\n    value = value / 1024;\n    i++;\n  }\n  return value.toFixed(2) + ' ' + units[i];\n}\n\nconst interfaceList = interfaces.map(i => {\n  const state = i.state || {};\n  const counters = state.counters || {};\n  const eth = (i[\"openconfig-if-ethernet:ethernet\"] || {}).state || {};\n  const speedRaw = eth[\"port-speed\"] || \"\";\n  const speed = speedRaw.replace(\"openconfig-if-ethernet:SPEED_\", \"\").replace(\"GB\", \"G\");\n\n  return {\n    physical_port: i.config?.description || i.name,\n    logical_port: i.name,\n    status: state[\"oper-status\"] || \"\",\n    speed: speed || \"\",\n    mtu: state[\"mtu\"] || null,\n    \"in-errors\": counters[\"in-errors\"] || 0,\n    \"out-errors\": counters[\"out-errors\"] || 0,\n    \"in-discards\": counters[\"in-discards\"] || 0,\n    \"out-discards\": counters[\"out-discards\"] || 0,\n    in_pkts_total: formatBytes(counters[\"in-octets\"] || 0),\n    out_pkts_total: formatBytes(counters[\"out-octets\"] || 0)\n  };\n});\n\nreturn {\n  json: {\n    ip_address,\n    interfaces: interfaceList,\n    timestamp: now\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        220
+      ],
+      "id": "a14f96f9-a038-4ce3-895e-89f8de5b1be7",
+      "name": "rm speed"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ip_address, username, password\nFROM public.networkdeploy_devices_config_cli\nWHERE ip_address = '{{ $json.ip_address }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2220,
+        780
+      ],
+      "id": "d53ac025-ba1c-40bb-8dee-065b5baa3cd3",
+      "name": "Check Passwd1",
+      "credentials": {
+        "postgres": {
+          "id": "s5kbyg0kk08W4Wi6",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = $json.results[0].stdout || \"\";\n\n// 1. 按行拆分\nconst lines = stdout.split('\\n').map(line => line.trim()).filter(line => line);\n\n// 2. 去掉表头（第一行和横线）\nconst dataLines = lines.slice(2);\n\n// 3. 初始化映射表\nconst aliasMap = {};\n\n// 4. 遍历数据行，按两个字段拆分（EthernetX + EthX）\nfor (const line of dataLines) {\n  const [physical, logical] = line.split(/\\s+/);\n  if (physical && logical) {\n    aliasMap[logical] = physical;\n  }\n}\n\nreturn [{ json: { alias_map: aliasMap } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        -60
+      ],
+      "id": "4363d7ed-3cd9-496b-8113-d6abc9091249",
+      "name": "Code1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Devices2": {
+      "main": [
+        [
+          {
+            "node": "Get Panel Layout by SKU1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Panel Layout by SKU1": {
+      "main": [
+        [
+          {
+            "node": "Port mapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Get Devices2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Devices3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Execute Command4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge13",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Passwd",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Passwd1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase3": {
+      "main": [
+        [
+          {
+            "node": "Merge8",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge8": {
+      "main": [
+        [
+          {
+            "node": "Merge9",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Supabase4": {
+      "main": [
+        [
+          {
+            "node": "Merge8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Devices3": {
+      "main": [
+        [
+          {
+            "node": "Merge9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge9": {
+      "main": [
+        [
+          {
+            "node": "Merge11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge11": {
+      "main": [
+        [
+          {
+            "node": "Merge12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge12": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command4": {
+      "main": [
+        [
+          {
+            "node": "Merge13",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge13": {
+      "main": [
+        [
+          {
+            "node": "rm speed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        []
+      ]
+    },
+    "replace_physical_port_with_alias_map1": {
+      "main": [
+        [
+          {
+            "node": "Supabase3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge14": {
+      "main": [
+        [
+          {
+            "node": "replace_physical_port_with_alias_map1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge16": {
+      "main": [
+        [
+          {
+            "node": "Code26",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge15": {
+      "main": [
+        [
+          {
+            "node": "system all",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code26": {
+      "main": [
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "system all": {
+      "main": [
+        [
+          {
+            "node": "Merge16",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "lsblk -o PArse1": {
+      "main": [
+        [
+          {
+            "node": "Merge15",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "cat /sys/block/sda/stat parse1": {
+      "main": [
+        [
+          {
+            "node": "Merge15",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "df -hT parse1": {
+      "main": [
+        [
+          {
+            "node": "Merge15",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "ps -eo parse1": {
+      "main": [
+        [
+          {
+            "node": "Merge15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "L2_forwarding": {
+      "main": [
+        [
+          {
+            "node": "Merge16",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "show mac+show mac aging-time parse1": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "show vlan brief parse1": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "show arp parse1": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "show interfaces stat parse1": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "show interfaces counters parse1": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Combined qos info": {
+      "main": [
+        [
+          {
+            "node": "ENGQOS1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ENGQOS1": {
+      "main": [
+        [
+          {
+            "node": "Merge16",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "show queue counters": {
+      "main": [
+        [
+          {
+            "node": "Combined qos info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "show ip route parse": {
+      "main": [
+        [
+          {
+            "node": "Merge16",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "show ip bgp network parse1": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "show ip bgp neighbors parse1": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "filter_bgp_summary1": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "show ip bgp summary parse1": {
+      "main": [
+        [
+          {
+            "node": "filter_bgp_summary1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge17": {
+      "main": [
+        [
+          {
+            "node": "L2_forwarding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Merge16",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "show interfaces counters parse": {
+      "main": [
+        [
+          {
+            "node": "mapping bandwidth",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mapping bandwidth": {
+      "main": [
+        [
+          {
+            "node": "Merge16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "show ip bgp summary parse1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "show ip bgp neighbors parse1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "show ip bgp network parse1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "show ip route parse",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "show queue counters",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "show arp parse1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "show interfaces counters parse1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "show interfaces counters parse",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ps -eo parse1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "df -hT parse1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "lsblk -o PArse1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cat /sys/block/sda/stat parse1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "show vlan brief parse1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "show interfaces stat parse1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "show mac+show mac aging-time parse1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Platform info": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Merge11",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase1": {
+      "main": [
+        [
+          {
+            "node": "Merge12",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Platform info1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Port mapping": {
+      "main": [
+        [
+          {
+            "node": "Supabase4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Passwd": {
+      "main": [
+        [
+          {
+            "node": "Platform info1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "rm speed": {
+      "main": [
+        [
+          {
+            "node": "Merge14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Passwd1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Platform info",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Merge14",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "489872f0-4712-4a1d-86ba-18d352860cf7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0fa1a38fff6e53f12e6ba40cfcf7e9721c2caef99dcd0c919e4dd673bc13a517"
+  },
+  "id": "e3cL0SpW6V9I62WR",
+  "tags": []
+}
