@@ -89,12 +89,12 @@ psql -h localhost -p 54322 -U postgres -d postgres -f init/seed.sql     # Import
 
 > Click Each Workflow | find the picture below | Open it and click as the picture below 
 ![image](https://github.com/user-attachments/assets/6c3c4b20-668c-4d7d-b82c-34fd34baa96e)
-> Do as below.
+
 ![image](https://github.com/user-attachments/assets/2ec37e3d-babb-4049-99f3-bf2138a5ff07)
 
 > Click Network_deploy+Telemetry_v0.8_/api/HDtelemetry/device_layout_realtime | find the picture below | Open & click
 ![image](https://github.com/user-attachments/assets/8bfad352-8f53-40ec-ad9b-36ea6cab2e83)
-> Do as what it shows.
+
 ![image](https://github.com/user-attachments/assets/adb775b9-268f-4b7b-af65-01f9c4a5ee75)
 > http://OlaOla_Controller_IP:8000/exec_batch
 
