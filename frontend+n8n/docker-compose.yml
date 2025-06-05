@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  n8n:
+    build: ./n8n
+    container_name: n8n-v2
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - TZ=Europe/Madrid
+      - GENERIC_TIMEZONE=Europe/Madrid
+      - DB_TYPE=sqlite
+      - N8N_SECURE_COOKIE=false
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_WORKFLOWS_FOLDER=/home/node/workflows
+    volumes:
+      - ./n8n/data/.n8n:/home/node/.n8n
+      - ./n8n/workflows:/home/node/workflows
+    networks:
+      - olaola-net
+
+  frontend:
+    image: nginx:alpine
+    container_name: olaola-frontend
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro
+    networks:
+      - olaola-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: olaola-proxy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - n8n
+      - frontend
+    networks:
+      - olaola-net
+
+  terminal:
+    build:
+      context: ./frontend/server  # 指向 terminal-server.js 所在目录
+      dockerfile: Dockerfile
+    container_name: terminal
+    ports:
+      - "3001:3001"
+    networks:
+      - olaola-net
+
+networks:
+  olaola-net:
+    driver: bridge

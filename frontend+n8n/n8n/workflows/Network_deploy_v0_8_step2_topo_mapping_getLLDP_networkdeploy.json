@@ -1,0 +1,335 @@
+{
+  "name": "Network_deploy_v0.8_step2_topo_mapping_getLLDP_networkdeploy",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/api/network-deployment/topology/generate",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2100,
+        40
+      ],
+      "id": "87907e4a-9d22-4345-b61e-6c4b982fdb73",
+      "name": "Webhook",
+      "webhookId": "b4d43e04-6e23-4b2e-9c96-ef5337ee1a71"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO networkdeploy_topology_snapshots (task_name, topology)\nVALUES (\n  '{{ $json.task_name }}',\n  '{{ JSON.stringify($json.topology) }}'\n);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -160,
+        80
+      ],
+      "id": "9bbc59a1-1acf-4464-9c8b-016f8682c03e",
+      "name": "INSERT TOPOLOGY",
+      "credentials": {
+        "postgres": {
+          "id": "EzSF61njyrocgFwV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        260,
+        480
+      ],
+      "id": "4fc644af-7042-4c43-9838-a374bcc36a85",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "ip_address",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1220,
+        -60
+      ],
+      "id": "e8b3b21d-5f6d-4499-9c9b-8f4ae628883f",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "ipMap",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1340,
+        280
+      ],
+      "id": "52b4e7bf-205f-4f47-949a-8136ec473902",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "=hostname",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -980,
+        120
+      ],
+      "id": "4d972d52-9961-4e8d-b1dc-8beb15233878",
+      "name": "Merge",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// 🔁 获取所有输入条目\nconst items = $input.all();\n\n// 🔍 第一步：构建 hostname → role 的映射表\nconst hostnameToRole = {};\n\nfor (const item of items) {\n  const node = item.json?.topology?.node;\n  if (node?.hostname && node?.role) {\n    hostnameToRole[node.hostname] = node.role;\n  }\n}\n\n// ✅ 第二步：为每个 link 填充 targetRole\nconst enriched = items.map(item => {\n  const topology = item.json.topology || {};\n  const node = topology.node || {};\n  const links = topology.links || [];\n\n  const enrichedLinks = links.map(link => {\n    const target = link.target || \"unknown\";\n    return {\n      ...link,\n      targetRole: hostnameToRole[target] || \"unknown\"\n    };\n  });\n\n  return {\n    json: {\n      task_name: item.json.task_name || `topology_${Date.now()}`,\n      topology: {\n        node,\n        links: enrichedLinks\n      }\n    }\n  };\n});\n\n// ✅ 返回补全后的结果\nreturn enriched;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        240
+      ],
+      "id": "42edcd5f-353b-457b-87a6-74a6be95413e",
+      "name": "add remoterole"
+    },
+    {
+      "parameters": {
+        "jsCode": "const nodes = $json.nodes || [];\nconst links = $json.links || [];\n\n// 创建 hostname → node 映射\nconst nodeMap = {};\nnodes.forEach(n => {\n  nodeMap[n.hostname] = { ...n, neighbors: [] };\n});\n\n// 遍历 links 填充 neighbors\nfor (const link of links) {\n  const { source, target, sourcePort, targetPort, targetRole } = link;\n\n  if (nodeMap[source]) {\n    nodeMap[source].neighbors.push({\n      target,\n      targetRole,\n      localPort: sourcePort,\n      remotePort: targetPort\n    });\n  }\n\n  if (nodeMap[target]) {\n    nodeMap[target].neighbors.push({\n      target: source,\n      targetRole: nodeMap[source]?.role || \"unknown\",\n      localPort: targetPort,\n      remotePort: sourcePort\n    });\n  }\n}\n\nreturn [{\n  json: {\n    ...$json,\n    nodes: Object.values(nodeMap)\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        60,
+        480
+      ],
+      "id": "0dd1e431-b0a9-4ccc-9941-6bfbd2ffd190",
+      "name": "Add Neighbors to Nodes"
+    },
+    {
+      "parameters": {
+        "jsCode": "const devices = ($json.body?.devices || []).filter(d => d.role !== 'OOB');\n\nif (!Array.isArray(devices)) {\n  throw new Error(\"请求体格式错误，必须包含数组形式的 devices 字段\");\n}\n\nconst ipList = devices.map(d => d.ip);\n\n// 转换成 ip → { hostname, role }\nconst ipMap = {};\ndevices.forEach(d => {\n  ipMap[d.ip] = { hostname: d.hostname, role: d.role };\n});\n\nreturn [{ json: { ipList, ipMap } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1820,
+        40
+      ],
+      "id": "893ece57-8ea3-4055-9126-7c6c0e2b4342",
+      "name": "Extract IP List hostname/role"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ip_address, lldp_neighbors, hostname\nFROM networkdeploy_devices\nWHERE ip_address IN ({{ $json.ipList.map(ip => `'${ip}'`).join(\",\") }});   ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1460,
+        -60
+      ],
+      "id": "64aa0357-3956-401b-9c20-eb3fa951cbde",
+      "name": "networkdeploy_devices LLDP",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "EzSF61njyrocgFwV",
+          "name": "Postgres account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// 构造 node 信息\nconst node = {\n  ip: $json.ip_address || null,\n  hostname: $json.hostname || \"unknown\",\n  role: $json.role || \"unknown\"\n};\n\n// 解析 LLDP 邻居\nlet lldpList = [];\ntry {\n  lldpList = JSON.parse($json.lldp_neighbors || \"[]\");\n} catch (e) {\n  lldpList = [];\n}\n\n// 🔁 从 $json.devices 构造 hostname → role 映射（前端 webhook 带进来的）\nconst hostnameToRole = {};\nif (Array.isArray($json.devices)) {\n  for (const d of $json.devices) {\n    hostnameToRole[d.hostname] = d.role;\n  }\n}\n\nconst seen = new Set();\nconst links = [];\n\nfor (const neighbor of lldpList) {\n  const targetName = neighbor.remote_device || \"unknown\";\n  const targetRole = hostnameToRole[targetName] || \"unknown\";\n\n  const key = `${node.hostname}_${targetName}_${neighbor.local_port}_${neighbor.remote_port}`;\n  if (seen.has(key)) continue;\n  seen.add(key);\n\n  links.push({\n    source: node.hostname,\n    target: targetName,\n    sourcePort: neighbor.local_port || null,\n    targetPort: neighbor.remote_port || null,\n    targetRole: targetRole\n  });\n}\n\n// ✅ 输出符合 Each 模式的结构\nreturn {\n  json: {\n    task_name: `topology_${Date.now()}`,\n    topology: {\n      node,\n      links\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -740,
+        240
+      ],
+      "id": "1b22b7d3-9d06-4475-9ce5-7b0e447722d4",
+      "name": "Gen"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.all();\n\n// === 合并所有 links 到一个数组 ===\nconst allLinks = [];\nfor (const item of input) {\n  const topology = item.json.topology || {};\n  const node = topology.node || {};\n  const links = topology.links || [];\n\n  for (const link of links) {\n    allLinks.push({\n      ...link,\n      _sourceIp: node.ip // 用于后续查重定位\n    });\n  }\n}\n\n// === 用 Set 去重：基于 source + target + port ===\nconst seen = new Set();\nconst dedupedLinks = [];\n\nfor (const link of allLinks) {\n  const key = [link.source, link.target, link.sourcePort, link.targetPort].join('|');\n  const reverseKey = [link.target, link.source, link.targetPort, link.sourcePort].join('|');\n\n  if (seen.has(key) || seen.has(reverseKey)) continue;\n\n  seen.add(key);\n  dedupedLinks.push(link);\n}\n\n// === 只保留最终 dedup 后的 links，nodes 仍然从原始来源来用 ===\nconst firstTopology = input[0].json.topology || {};\nconst nodes = input.map(item => item.json.topology?.node).filter(Boolean);\n\nreturn [{\n  json: {\n    task_name: `topology_${Date.now()}`,\n    nodes,\n    links: dedupedLinks\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        480
+      ],
+      "id": "832a0932-d514-4b40-9093-fc69c8712889",
+      "name": "dedup"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract IP List hostname/role",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "INSERT TOPOLOGY": {
+      "main": [
+        []
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Gen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add remoterole": {
+      "main": [
+        [
+          {
+            "node": "INSERT TOPOLOGY",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "dedup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Neighbors to Nodes": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract IP List hostname/role": {
+      "main": [
+        [
+          {
+            "node": "networkdeploy_devices LLDP",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "networkdeploy_devices LLDP": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen": {
+      "main": [
+        [
+          {
+            "node": "add remoterole",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dedup": {
+      "main": [
+        [
+          {
+            "node": "Add Neighbors to Nodes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "028346b5-ddad-418e-ab26-8b99c4411817",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3c4f8b2c2b4d02cf4fc2cfa5c4b6a1500ac4c1c82a34628dc509dca968f8700d"
+  },
+  "id": "0JkSVTkDP6vdwHtz",
+  "tags": []
+}

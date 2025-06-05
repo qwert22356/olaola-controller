@@ -1,0 +1,173 @@
+{
+  "name": "Network_Deploy_v0.8_step4_snapshots_refresh",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  status: $json.status || \"success\",\n  count: $items().length,\n  message: $json.message || null,\n  data: $items().map(item => item.json)\n}) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        180,
+        -80
+      ],
+      "id": "1b1c3a73-32f5-4de9-befc-f2ddc556ddad",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ba7996f9-8c17-41a6-a29f-95f59ee04c8e",
+              "name": "ip_address",
+              "value": "={{ $json.ip_address }}",
+              "type": "string"
+            },
+            {
+              "id": "f7b2fbf6-beea-4150-be94-6e38562f61bc",
+              "name": "hostname",
+              "value": "={{ $json.hostname }}",
+              "type": "string"
+            },
+            {
+              "id": "bfa64eb9-1486-4578-861d-868c0905c3f3",
+              "name": "hw_sku",
+              "value": "={{ $json.hw_sku }}",
+              "type": "string"
+            },
+            {
+              "id": "da799444-acbb-4c02-8533-2a6682e6ab1a",
+              "name": "vendor_hw",
+              "value": "={{ $json.vendor_hw }}",
+              "type": "string"
+            },
+            {
+              "id": "d9ca3917-da7c-4961-a538-a99d41337590",
+              "name": "vendor_sw",
+              "value": "={{ $json.vendor_sw }}",
+              "type": "string"
+            },
+            {
+              "id": "ab2fce9a-30b7-4d70-9678-ae8a068f00c3",
+              "name": "snapshot_time",
+              "value": "={{ $json.snapshot_time }}",
+              "type": "string"
+            },
+            {
+              "id": "4cd233ee-b593-41e9-b518-3ece8b7e4c4c",
+              "name": "version_tag",
+              "value": "={{ $json.version_tag }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -60,
+        -80
+      ],
+      "id": "afc75814-b9eb-4f31-adfc-ad6d095d989a",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/networkdeploy/getallsnapshot",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        -80
+      ],
+      "id": "042ee4b0-c41b-4ab9-ada9-e0f3d72563fa",
+      "name": "Webhook1",
+      "webhookId": "b569cc93-91d3-4f9f-9979-344de3e34c50"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM networkdeploy_config_snapshots\nORDER BY snapshot_time DESC\nLIMIT 50;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -280,
+        -80
+      ],
+      "id": "ffeef72b-a9e7-4eb3-8513-02b944e3c5ae",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "EzSF61njyrocgFwV",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4ab3171a-25ad-4935-bfe5-810fd245c8c4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3c4f8b2c2b4d02cf4fc2cfa5c4b6a1500ac4c1c82a34628dc509dca968f8700d"
+  },
+  "id": "G8ZnBVmSlU8naQaZ",
+  "tags": []
+}

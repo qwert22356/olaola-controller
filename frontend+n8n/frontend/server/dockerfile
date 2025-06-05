@@ -1,0 +1,31 @@
+# Dockerfile - frontend+n8n/frontend/server/Dockerfile
+FROM node:20-slim
+
+WORKDIR /app
+
+COPY . .
+
+# ✅ 使用 Debian 的 apt 而非 apk
+RUN apt-get update && \
+    apt-get install -y python3 make g++ && \
+    npm install && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+EXPOSE 3001
+
+CMD ["node", "terminal-server.js"]
+
+RUN apt-get update && \
+    apt-get install -y \
+      iputils-ping \
+      inetutils-traceroute \
+      openssh-client \
+      tcpdump \
+      net-tools \
+      dnsutils \
+      curl \
+      wget \
+      iproute2 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*

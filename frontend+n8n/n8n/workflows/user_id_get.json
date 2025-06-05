@@ -1,0 +1,209 @@
+{
+  "name": "user_id_get",
+  "nodes": [
+    {
+      "parameters": {
+        "command": "mkdir -p ~/.n8n/metadata_user_id\nuuid=$(cat /proc/sys/kernel/random/uuid)\necho \"{\\\"user_id\\\": \\\"$uuid\\\"}\" > ~/.n8n/metadata_user_id/olaola_meta.json"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        260,
+        -160
+      ],
+      "id": "22bba76e-e671-4580-a256-558405758de4",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "command": "user_id=$(jq -r '.user_id // empty' ~/.n8n/metadata_user_id/olaola_meta.json 2>/dev/null)\n[ -n \"$user_id\" ] && echo \"EXISTS\" || echo \"MISSING\""
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -140
+      ],
+      "id": "1f0b56af-c19e-4808-83c6-bed9f4f9ead4",
+      "name": "Execute Command1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "369fc4ce-01c0-48f7-9c00-0cfb94bee7dd",
+              "leftValue": "={{ $json.stdout }}",
+              "rightValue": "MISSING",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -20,
+        -140
+      ],
+      "id": "6ec97ade-ae86-4eed-bffa-e6c72b603440",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "command": "cat ~/.n8n/metadata_user_id/olaola_meta.json"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        260,
+        20
+      ],
+      "id": "29b180e8-6e62-4346-8485-500d2d2ab14c",
+      "name": "Execute Command2"
+    },
+    {
+      "parameters": {
+        "command": "cat ~/.n8n/metadata_user_id/olaola_meta.json"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        460,
+        -160
+      ],
+      "id": "96a75ac6-a2da-46f5-9039-3cd44675656d",
+      "name": "Execute Command3"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "olaola/user_id",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        -140
+      ],
+      "id": "b8fe2943-7da3-418c-9bda-654643b340b2",
+      "name": "Webhook",
+      "webhookId": "9b0ec029-0801-4d6c-af66-d5af9b363c6b"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        -60
+      ],
+      "id": "1adc35e3-6e1f-4f36-8761-3a9b9df4498a",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Command1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute Command2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Execute Command3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute Command1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command3": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8ff559d3-1bc8-45ac-aed7-74d3d5656dbd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3c4f8b2c2b4d02cf4fc2cfa5c4b6a1500ac4c1c82a34628dc509dca968f8700d"
+  },
+  "id": "1jBV93WYekm7nu0P",
+  "tags": []
+}
