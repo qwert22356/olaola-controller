@@ -89,14 +89,13 @@ psql -h localhost -p 54322 -U postgres -d postgres -f init/seed.sql     # Import
 - Click Each Workflow | find the picture below | Open it and click as the picture below ![image](https://github.com/user-attachments/assets/5286dab4-4d81-4c69-985b-80d567594646)
 ![image](https://github.com/user-attachments/assets/2ec37e3d-babb-4049-99f3-bf2138a5ff07)
 
-- Click Network_deploy+Telemetry_v0.8_/api/HDtelemetry/device_layout_realtime | find the picture below | Open it and click as the picture below 
+- Click Network_deploy+Telemetry_v0.8_/api/HDtelemetry/device_layout_realtime | find the picture below | Open & click
 ![image](https://github.com/user-attachments/assets/02b53851-3473-4ad4-b7cb-d2d5b79d7dd9)
 
 ![image](https://github.com/user-attachments/assets/9981d6b1-a5cc-4b7f-af8b-9cb8cee6d34a)
 
 ![image](https://github.com/user-attachments/assets/c8ca23f6-6b28-4352-8a54-ee2e9fd58561)
-http://OlaOla_Controller_IP:8000/exec_batch
-
+> http://OlaOla_Controller_IP:8000/exec_batch
 
 ## Initialization - OlaOla Network deployment
 - 1st step: Device Discovery # put the ip address subnet range and search
@@ -106,9 +105,11 @@ http://OlaOla_Controller_IP:8000/exec_batch
 - 5th step: store your topo # choose 4th the lldp device and select role click generate topo and save it!
   
 ## Initialization - OlaOla Network telemetry
+- Go to http://192.168.1.77:8080/hd-telemetry and fetch the real data that you want
+- Go to hd-telemetry pages to see the data that you had fetched.
 
 ## Initializaion - OlaOla Copilot
-
+> You need to copy this user_id to olaola.dev and Login your account then go to dashboard to bind your user_id.
 ![image](https://github.com/user-attachments/assets/22df75da-755c-4f25-a3ef-27d483161853)
 
 
