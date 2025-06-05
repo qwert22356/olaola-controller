@@ -113,6 +113,14 @@ Transform your network infrastructure with a truly intelligent, AI-powered contr
 - **AI Copilot**: LLM-based (Deepseek V3, OlaOla SONiC Model_v0.6, local inference, and retrieval)  
 <br>
 
+## Vendor OS Support
+| Feature                              | Status          |
+|--------------------------------------|-----------------|
+| Community SONiC                      | ✅ Done         |
+| Broadcom SONiC                       | 🛠️ In Progress  |
+| Cumulus Linux                        | 🛠️ In Progress  |
+| Vendor Commercial OS                 | 🚧 Coming Soon  |
+
 ## 👥 Join the Mission
 
 We are building a **new kind of network** — one that collaborates, reasons, and evolves with you.
