@@ -92,6 +92,7 @@ psql -h localhost -p 54322 -U postgres -d postgres -f init/seed.sql     # Import
 - Click Network_deploy+Telemetry_v0.8_/api/HDtelemetry/device_layout_realtime | find the picture below | Open & click
 ![image](https://github.com/user-attachments/assets/02b53851-3473-4ad4-b7cb-d2d5b79d7dd9)
 ![image](https://github.com/user-attachments/assets/9981d6b1-a5cc-4b7f-af8b-9cb8cee6d34a) ![image](https://github.com/user-attachments/assets/c8ca23f6-6b28-4352-8a54-ee2e9fd58561)
+![image](https://github.com/user-attachments/assets/035603c1-e200-48e5-a6b0-b0d038a5465a)
 > http://OlaOla_Controller_IP:8000/exec_batch
 
 ## Initialization - OlaOla Network deployment
