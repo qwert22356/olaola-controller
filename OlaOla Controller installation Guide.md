@@ -86,7 +86,7 @@ psql -h localhost -p 54322 -U postgres -d postgres -f init/seed.sql     # Import
   
 - Click Each Workflow | find the picture below | Open it and then close it
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/f35ce91e-0d33-4441-b1b7-d6f02a9a491a" width="20"/>
+  <img src="https://github.com/user-attachments/assets/f35ce91e-0d33-4441-b1b7-d6f02a9a491a" width="60"/>
 </p>
 
 - Click Each Workflow | find the picture below | Open it and click as the picture below ![image](https://github.com/user-attachments/assets/5286dab4-4d81-4c69-985b-80d567594646)
